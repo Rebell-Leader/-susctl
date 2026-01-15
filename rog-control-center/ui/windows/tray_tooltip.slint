@@ -1,0 +1,76 @@
+import { RogPalette } from "../themes/rog_theme.slint";
+import { SystemStatus } from "../widgets/status_bar.slint";
+
+component StatusItem inherits Rectangle {
+    in property <string> label;
+    in property <string> value;
+    in property <string> unit;
+    
+    HorizontalLayout {
+        spacing: 8px;
+        Text { 
+            text: label; 
+            color: RogPalette.text-secondary; 
+            font-weight: 700; 
+            vertical-alignment: center; 
+            font-size: 13px;
+        }
+        Text { 
+            text: value; 
+            color: RogPalette.text-primary; 
+            vertical-alignment: center; 
+            font-size: 14px;
+        }
+        Text { 
+            text: unit; 
+            color: RogPalette.text-secondary; 
+            font-size: 11px; 
+            vertical-alignment: center; 
+        }
+    }
+}
+
+export component TrayTooltip inherits Window {
+    always-on-top: true;
+    no-frame: true;
+    background: transparent;
+    width: 280px;
+    height: 160px;
+
+    Rectangle {
+        background: RogPalette.control-background;
+        border-radius: 8px;
+        border-width: 1px;
+        border-color: RogPalette.control-border;
+        drop-shadow-blur: 10px;
+        drop-shadow-color: rgba(0,0,0,0.5);
+        
+        VerticalLayout {
+            padding: 15px;
+            spacing: 12px;
+            
+            Text {
+                text: "System Statistics";
+                color: RogPalette.accent;
+                font-size: 16px;
+                font-weight: 800;
+            }
+            
+            GridLayout {
+                spacing: 15px;
+                Row {
+                    StatusItem { label: "CPU"; value: SystemStatus.cpu_temp; unit: "°C"; }
+                    StatusItem { label: "GPU"; value: SystemStatus.gpu_temp; unit: "°C"; }
+                }
+                Row {
+                    StatusItem { label: "FAN"; value: SystemStatus.cpu_fan; unit: "RPM"; }
+                    StatusItem { label: "GPU"; value: SystemStatus.gpu_fan; unit: "RPM"; }
+                }
+                Row {
+                    StatusItem { label: "PWR"; value: SystemStatus.power_w; unit: "W"; }
+                    StatusItem { label: "AVG"; value: SystemStatus.power_avg_w; unit: "W"; }
+                }
+            }
+        }
+    }
+}

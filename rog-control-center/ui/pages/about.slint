@@ -1,62 +1,128 @@
-import { AboutSlint, VerticalBox, HorizontalBox } from "std-widgets.slint";
+import { VerticalBox, HorizontalBox, ScrollView } from "std-widgets.slint";
+import { RogPalette } from "../themes/rog_theme.slint";
 
-export component PageAbout inherits VerticalLayout {
-    padding: 10px;
-    spacing: 10px;
-    Text {
-        vertical-alignment: TextVerticalAlignment.center;
-        horizontal-alignment: TextHorizontalAlignment.center;
-        text: "A UI for asusctl made with slint";
-        font-size: 22px;
-    }
+export component PageAbout inherits Rectangle {
+    background: RogPalette.background;
 
-    HorizontalBox {
-        alignment: LayoutAlignment.center;
+    ScrollView {
         VerticalBox {
-            alignment: LayoutAlignment.center;
+            padding: 30px;
+            spacing: 20px;
+            alignment: center;
 
+            // Title
             Text {
-                wrap: TextWrap.word-wrap;
-                text: "You need to use kernel version 6.19 to use this software";
+                horizontal-alignment: center;
+                text: "ROG Control Center";
+                font-size: 28px;
+                font-weight: 800;
+                color: RogPalette.accent;
             }
 
             Text {
-                vertical-alignment: TextVerticalAlignment.center;
-                horizontal-alignment: TextHorizontalAlignment.center;
-                text: "Todo:";
-                font-size: 22px;
+                horizontal-alignment: center;
+                text: "A modern UI for asusctl built with Slint";
+                font-size: 16px;
+                color: RogPalette.text-secondary;
             }
 
-            Text {
-                text: "- [ ] Theme the widgets";
+            // Version info
+            Rectangle {
+                height: 60px;
+                background: RogPalette.control-background;
+                border-radius: 8px;
+                border-width: 1px;
+                border-color: RogPalette.control-border;
+
+                HorizontalBox {
+                    padding: 15px;
+                    alignment: center;
+                    Text {
+                        text: "Version 6.3.0";
+                        font-size: 14px;
+                        color: RogPalette.text-primary;
+                    }
+                    Text {
+                        text: "  |  ";
+                        color: RogPalette.text-secondary;
+                    }
+                    Text {
+                        text: "Requires kernel 6.10+";
+                        font-size: 14px;
+                        color: RogPalette.text-secondary;
+                    }
+                }
             }
 
-            Text {
-                text: "- [ ] Add a cpu/gpu temp/fan speed info bar";
+            // Features section
+            Rectangle {
+                background: RogPalette.control-background;
+                border-radius: 8px;
+                border-width: 1px;
+                border-color: RogPalette.control-border;
+
+                VerticalBox {
+                    padding: 20px;
+                    spacing: 12px;
+
+                    Text {
+                        text: "Features";
+                        font-size: 18px;
+                        font-weight: 700;
+                        color: RogPalette.accent;
+                    }
+
+                    // Completed features
+                    Text { text: "[x] ROG-themed dark UI"; color: RogPalette.text-primary; font-size: 13px; }
+                    Text { text: "[x] System status bar (CPU/GPU temps & fan speeds)"; color: RogPalette.text-primary; font-size: 13px; }
+                    Text { text: "[x] Power profile management"; color: RogPalette.text-primary; font-size: 13px; }
+                    Text { text: "[x] Aura RGB keyboard lighting"; color: RogPalette.text-primary; font-size: 13px; }
+                    Text { text: "[x] AniMe Matrix display"; color: RogPalette.text-primary; font-size: 13px; }
+                    Text { text: "[x] Slash LED control"; color: RogPalette.text-primary; font-size: 13px; }
+                    Text { text: "[x] Supergfx graphics switching"; color: RogPalette.text-primary; font-size: 13px; }
+                    Text { text: "[x] Screenpad brightness & gamma"; color: RogPalette.text-primary; font-size: 13px; }
+                    Text { text: "[x] Custom fan curves"; color: RogPalette.text-primary; font-size: 13px; }
+                    Text { text: "[x] Desktop notifications (KDE OSD)"; color: RogPalette.text-primary; font-size: 13px; }
+                    Text { text: "[x] System tray integration"; color: RogPalette.text-primary; font-size: 13px; }
+
+                    // Pending features
+                    Rectangle { height: 10px; }
+                    Text { text: "Planned:"; font-size: 14px; font-weight: 600; color: RogPalette.text-secondary; }
+                    Text { text: "[ ] ROG Ally specific settings"; color: RogPalette.text-secondary; font-size: 13px; }
+                    Text { text: "[ ] Advanced Aura zone editing"; color: RogPalette.text-secondary; font-size: 13px; }
+                }
             }
 
-            Text {
-                text: "- [ ] Include fan speeds, temps in a bottom bar";
-            }
+            // Credits
+            Rectangle {
+                background: RogPalette.control-background;
+                border-radius: 8px;
+                border-width: 1px;
+                border-color: RogPalette.control-border;
 
-            Text {
-                text: "- [ ] Slash control";
-            }
+                VerticalBox {
+                    padding: 20px;
+                    spacing: 8px;
 
-            Text {
-                text: "- [ ] Screenpad controls";
-            }
+                    Text {
+                        text: "Credits";
+                        font-size: 18px;
+                        font-weight: 700;
+                        color: RogPalette.accent;
+                    }
 
-            Text {
-                text: "- [ ] ROG Ally specific settings";
+                    Text {
+                        text: "asusctl & asusd by Luke Jones";
+                        font-size: 13px;
+                        color: RogPalette.text-primary;
+                    }
+                    Text {
+                        text: "UI built with Slint";
+                        font-size: 13px;
+                        color: RogPalette.text-secondary;
+                    }
+                }
             }
         }
-    }
-
-    Text {
-        vertical-alignment: TextVerticalAlignment.center;
-        horizontal-alignment: TextHorizontalAlignment.center;
-        text: "Work in progress";
-        font-size: 22px;
     }
 }

@@ -1,0 +1,102 @@
+import { Button, VerticalBox, Slider, Switch } from "std-widgets.slint";
+import { ScreenpadPageData } from "../types/screenpad_types.slint";
+import { RogPalette } from "../themes/rog_theme.slint";
+import { RogItem, SystemSlider } from "../widgets/common.slint";
+
+export { ScreenpadPageData }
+
+export component PageScreenpad inherits Rectangle {
+    background: RogPalette.background;
+
+    VerticalBox {
+        alignment: LayoutAlignment.start;
+        padding: 20px;
+        spacing: 20px;
+
+        Text {
+            text: @tr("Screenpad Controls");
+            font-size: 24px;
+            font-weight: 700;
+            color: RogPalette.accent;
+        }
+
+        RogItem {
+            HorizontalLayout {
+                padding: 15px;
+                spacing: 20px;
+                alignment: LayoutAlignment.space-between;
+                
+                Text {
+                    text: @tr("Enable Screenpad");
+                    font-size: 16px;
+                    vertical-alignment: TextVerticalAlignment.center;
+                    color: RogPalette.text-primary;
+                }
+
+                Switch {
+                    checked <=> ScreenpadPageData.power;
+                    toggled => {
+                        ScreenpadPageData.cb_power(self.checked);
+                    }
+                }
+            }
+        }
+
+        VerticalLayout {
+            spacing: 15px;
+            
+            // Brightness Slider
+            SystemSlider {
+                enabled: ScreenpadPageData.power;
+                text: @tr("Brightness");
+                minimum: 0;
+                maximum: 255;
+                value: ScreenpadPageData.brightness;
+                help_text: ScreenpadPageData.brightness == -1 ? @tr("Not available") : "";
+                released => {
+                    ScreenpadPageData.cb_brightness(Math.round(self.value));
+                }
+            }
+
+            // Gamma Slider (New)
+            SystemSlider {
+                enabled: ScreenpadPageData.power;
+                text: @tr("Gamma");
+                minimum: 0.1;
+                maximum: 2.5;
+                value: ScreenpadPageData.gamma;
+                help_text: @tr("Adjust color intensity");
+                released => {
+                    ScreenpadPageData.cb_gamma(self.value);
+                }
+            }
+
+            RogItem {
+                enabled: ScreenpadPageData.power;
+                HorizontalLayout {
+                    padding: 15px;
+                    spacing: 20px;
+                    alignment: LayoutAlignment.space-between;
+                    
+                    Text {
+                        text: @tr("Sync with Primary Display");
+                        font-size: 16px;
+                        vertical-alignment: TextVerticalAlignment.center;
+                        color: RogPalette.text-primary;
+                    }
+
+                    Switch {
+                        enabled: ScreenpadPageData.power;
+                        checked <=> ScreenpadPageData.sync_with_primary;
+                        toggled => {
+                            ScreenpadPageData.cb_sync_with_primary(self.checked);
+                        }
+                    }
+                }
+            }
+        }
+
+        // Spacer
+        Rectangle {}
+    }
+}

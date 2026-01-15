@@ -1,12 +1,14 @@
-import { Palette, VerticalBox, HorizontalBox, GroupBox } from "std-widgets.slint";
+import { VerticalBox, HorizontalBox, GroupBox } from "std-widgets.slint";
 import { SystemToggleVert, SystemDropdown } from "common.slint";
 import { PowerZones } from "../types/aura_types.slint";
+import { RogPalette } from "../themes/rog_theme.slint";
 
 export component AuraPowerGroup inherits Rectangle {
     min-width: row.min-width;
-    border-radius: 20px;
-    background: Palette.alternate-background;
-    opacity: 0.9;
+    border-radius: 8px;
+    background: RogPalette.control-background;
+    border-width: 1px;
+    border-color: RogPalette.control-border;
     in-out property <string> group-title;
     in-out property <bool> boot_checked;
     in-out property <bool> awake_checked;
@@ -20,7 +22,7 @@ export component AuraPowerGroup inherits Rectangle {
         spacing: 10px;
         Text {
             font-size: 18px;
-            color: Palette.alternate-foreground;
+            color: RogPalette.text-primary;
             horizontal-alignment: TextHorizontalAlignment.center;
             text <=> root.group-title;
         }
@@ -72,9 +74,10 @@ export component AuraPowerGroup inherits Rectangle {
 
 export component AuraPowerGroupOld inherits Rectangle {
     min-width: row.min-width;
-    border-radius: 20px;
-    background: Palette.alternate-background;
-    opacity: 0.9;
+    border-radius: 8px;
+    background: RogPalette.control-background;
+    border-width: 1px;
+    border-color: RogPalette.control-border;
     in-out property <int> current_zone;
     in-out property <[int]> zones;
     in-out property <[string]> zone_strings;
@@ -90,7 +93,7 @@ export component AuraPowerGroupOld inherits Rectangle {
         spacing: 10px;
         Text {
             font-size: 18px;
-            color: Palette.alternate-foreground;
+            color: RogPalette.text-primary;
             horizontal-alignment: TextHorizontalAlignment.center;
             text <=> root.group-title;
         }

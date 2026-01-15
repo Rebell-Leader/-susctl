@@ -1,7 +1,8 @@
 // Copyright © SixtyFPS GmbH <info@slint.dev>
 // SPDX-License-Identifier: MIT
 
-import { Palette, HorizontalBox, VerticalBox } from "std-widgets.slint";
+import { HorizontalBox, VerticalBox } from "std-widgets.slint";
+import { RogPalette } from "../themes/rog_theme.slint";
 
 component SideBarItem inherits Rectangle {
     // padding only has effect on layout elements
@@ -28,12 +29,21 @@ component SideBarItem inherits Rectangle {
     ]
     state := Rectangle {
         opacity: 0;
-        border-width: 2px;
-        border-radius: 10px;
-        border-color: Palette.accent-background;
-        background: Palette.alternate-background;
+        border-width: 0px; // Modern look: no full border, maybe just a left bar? 
+        // Or keep the ROG style border
+        border-color: RogPalette.accent;
+        background: root.selected ? RogPalette.control-background : RogPalette.alternate-background;
+        
+        // Add a red indicator line on the left for selected items
+        Rectangle {
+            x: 0;
+            width: 4px;
+            height: 100%;
+            background: root.selected ? RogPalette.accent : Colors.transparent;
+        }
+        
         animate opacity { duration: 150ms; }
-        animate border-width { duration: 150ms; }
+        // animate border-width { duration: 150ms; }
         height: l.preferred-height;
     }
 
@@ -41,9 +51,10 @@ component SideBarItem inherits Rectangle {
         y: (parent.height - self.height) / 2;
         spacing: 0px;
         label := Text {
-            color: Palette.foreground;
+            color: root.selected ? RogPalette.accent : RogPalette.text-primary;
             vertical-alignment: center;
             font-size: 14px;
+            font-weight: root.selected ? 700 : 400;
         }
     }
 
@@ -66,10 +77,10 @@ export component SideBar inherits Rectangle {
     accessible-role: tab;
     accessible-delegate-focus: root.current-focused >= 0 ? root.current-focused : root.current-item;
     Rectangle {
-        border-width: 2px;
-        border-color: Palette.accent-background;
+        border-width: 0px;
+        // border-color: RogPalette.accent;
         border-radius: 0px;
-        background: Palette.background.darker(0.2);
+        background: RogPalette.alternate-background; // Darker sidebar
         fs := FocusScope {
             key-pressed(event) => {
                 if (event.text == "\n") {
@@ -104,12 +115,19 @@ export component SideBar inherits Rectangle {
         spacing: 4px;
         alignment: start;
         label := Text {
-            font-size: 16px;
+            font-size: 24px; // Larger brand text
+            font-weight: 800;
             horizontal-alignment: center;
+            color: RogPalette.accent; // ROG Red brand text
+        }
+
+        // Spacer after brand text
+        Rectangle {
+            height: 20px;
         }
 
         navigation := VerticalLayout {
-            spacing: -6px;
+            spacing: 4px; // Spacing between items
             alignment: start;
             vertical-stretch: 0;
             for item[index] in root.model: SideBarItem {

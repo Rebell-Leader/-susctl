@@ -4502,6 +4502,8 @@ dependencies = [
  "rog_dbus",
  "rog_platform",
  "rog_profiles",
+ "rog_slash",
+ "ron",
  "serde",
  "slint",
  "slint-build",

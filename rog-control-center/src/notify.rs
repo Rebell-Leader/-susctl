@@ -11,6 +11,8 @@ use std::time::Duration;
 
 use log::{debug, error, info, warn};
 use notify_rust::{Hint, Notification, Timeout};
+use rog_dbus::zbus_platform::PlatformProxy;
+use rog_platform::platform::PlatformProfile;
 use rog_platform::power::AsusPower;
 use serde::{Deserialize, Serialize};
 use supergfxctl::pci_device::GfxPower;
@@ -28,6 +30,7 @@ pub struct EnabledNotifications {
     pub enabled: bool,
     pub receive_notify_gfx: bool,
     pub receive_notify_gfx_status: bool,
+    pub receive_notify_platform_profile: bool,
 }
 
 impl Default for EnabledNotifications {
@@ -36,6 +39,7 @@ impl Default for EnabledNotifications {
             enabled: true,
             receive_notify_gfx: true,
             receive_notify_gfx_status: true,
+            receive_notify_platform_profile: true,
         }
     }
 }
@@ -84,6 +88,57 @@ fn start_dpu_status_mon(config: Arc<Mutex<Config>>) {
     if !found_dgpu {
         warn!("Did not find a dGPU on this system, dGPU status won't be avilable");
     }
+}
+
+/// Start monitoring for platform profile changes (triggered by Fn+F5 or software)
+/// and display an OSD notification when the profile changes.
+fn start_platform_profile_mon(config: Arc<Mutex<Config>>, rt: &Runtime) {
+    let enabled_notifications_copy = config.clone();
+    rt.spawn(async move {
+        let conn = match zbus::Connection::system().await {
+            Ok(c) => c,
+            Err(e) => {
+                error!("zbus signal: platform_profile_mon: {e}");
+                return;
+            }
+        };
+        let proxy = match PlatformProxy::builder(&conn).build().await {
+            Ok(p) => p,
+            Err(e) => {
+                error!("zbus signal: platform_profile_mon proxy: {e}");
+                return;
+            }
+        };
+
+        // Get initial profile to avoid notification on startup
+        let mut last_profile = proxy.platform_profile().await.ok();
+
+        info!("Started platform profile change monitor");
+        use futures_util::StreamExt;
+        let mut stream = proxy.receive_platform_profile_changed().await;
+        while let Some(e) = stream.next().await {
+            if let Ok(config) = enabled_notifications_copy.lock() {
+                if !config.notifications.enabled
+                    || !config.notifications.receive_notify_platform_profile
+                {
+                    continue;
+                }
+            }
+            if let Ok(new_profile) = e.get().await {
+                // Only show notification if profile actually changed
+                if last_profile != Some(new_profile) {
+                    debug!("Platform profile changed to: {:?}", new_profile);
+                    if let Err(e) = do_platform_profile_notif("Power Profile:", &new_profile)
+                        .show()
+                        .map(|n| n.on_close(|_| ()))
+                    {
+                        warn!("Failed to show platform profile notification: {e}");
+                    }
+                    last_profile = Some(new_profile);
+                }
+            }
+        }
+    });
 }
 
 pub fn start_notifications(
@@ -143,6 +198,9 @@ pub fn start_notifications(
 
     info!("Attempting to start plain dgpu status monitor");
     start_dpu_status_mon(config.clone());
+
+    info!("Starting platform profile change monitor");
+    start_platform_profile_mon(config.clone(), rt);
 
     // GPU MUX Mode notif
     // TODO: need to get armoury attrs and iter to find
@@ -205,6 +263,31 @@ fn do_gpu_status_notif(message: &str, data: &GfxPower) -> Notification {
         GfxPower::AsusDisabled => "asus_notif_white",
         GfxPower::AsusMuxDiscreet | GfxPower::Active => "asus_notif_red",
         GfxPower::Unknown => "gpu-integrated",
+    };
+    notif.icon(icon);
+    notif
+}
+
+/// Create a notification for platform profile (power mode) changes.
+/// Uses profile-specific icons and user-friendly names.
+fn do_platform_profile_notif(message: &str, profile: &PlatformProfile) -> Notification {
+    let profile_name = match profile {
+        PlatformProfile::Balanced => "Balanced",
+        PlatformProfile::Performance => "Performance",
+        PlatformProfile::Quiet => "Quiet",
+        PlatformProfile::LowPower => "Low Power",
+        PlatformProfile::Custom => "Custom",
+    };
+    let mut notif = base_notification(message, &profile_name.to_owned());
+
+    // Use appropriate icons for each profile
+    // These icons should be available in the system or ROG icon pack
+    let icon = match profile {
+        PlatformProfile::Balanced => "asus_notif_blue", // Blue for balanced
+        PlatformProfile::Performance => "asus_notif_red", // Red for performance
+        PlatformProfile::Quiet => "asus_notif_green",   // Green for quiet/power saving
+        PlatformProfile::LowPower => "asus_notif_green", // Green for low power
+        PlatformProfile::Custom => "asus_notif_white",  // White for custom
     };
     notif.icon(icon);
     notif

@@ -1,6 +1,12 @@
+pub mod aura_animator;
 pub mod setup_anime;
 pub mod setup_aura;
+pub mod setup_fan_curve_custom;
 pub mod setup_fans;
+pub mod setup_screenpad;
+pub mod setup_slash;
+pub mod setup_status;
+pub mod setup_supergfx;
 pub mod setup_system;
 
 use std::sync::{Arc, Mutex};
@@ -11,9 +17,14 @@ use rog_dbus::list_iface_blocking;
 use slint::{ComponentHandle, SharedString, Weak};
 
 use crate::config::Config;
+use crate::tray::TrayStats;
 use crate::ui::setup_anime::setup_anime_page;
 use crate::ui::setup_aura::setup_aura_page;
 use crate::ui::setup_fans::setup_fan_curve_page;
+use crate::ui::setup_screenpad::setup_screenpad;
+use crate::ui::setup_slash::setup_slash;
+use crate::ui::setup_status::setup_status;
+use crate::ui::setup_supergfx::setup_supergfx;
 use crate::ui::setup_system::{setup_system_page, setup_system_page_callbacks};
 use crate::{AppSettingsPageData, MainWindow};
 
@@ -82,7 +93,10 @@ pub fn show_toast(
     };
 }
 
-pub fn setup_window(config: Arc<Mutex<Config>>) -> MainWindow {
+pub fn setup_window(
+    config: Arc<Mutex<Config>>,
+    stats_tx: tokio::sync::watch::Sender<TrayStats>,
+) -> MainWindow {
     slint::set_xdg_app_id("rog-control-center")
         .map_err(|e| warn!("Couldn't set application ID: {e:?}"))
         .ok();
@@ -101,7 +115,25 @@ pub fn setup_window(config: Arc<Mutex<Config>>) -> MainWindow {
             available.contains(&"xyz.ljones.Platform".to_string()),
             available.contains(&"xyz.ljones.Aura".to_string()),
             available.contains(&"xyz.ljones.Anime".to_string()),
+            available.contains(&"xyz.ljones.Slash".to_string()),
+            // Supergfx check
+            {
+                if let Ok(conn) = zbus::blocking::Connection::system() {
+                    zbus::blocking::fdo::DBusProxy::new(&conn)
+                        .ok()
+                        .and_then(|p| {
+                            p.name_has_owner("org.supergfxctl.Daemon".try_into().ok()?)
+                                .ok()
+                        })
+                        .unwrap_or(false)
+                } else {
+                    false
+                }
+            },
+            // Screenpad check (Backlight interface)
+            available.contains(&"xyz.ljones.Backlight".to_string()),
             available.contains(&"xyz.ljones.FanCurves".to_string()),
+            true,
             true,
             true,
         ]
@@ -110,6 +142,33 @@ pub fn setup_window(config: Arc<Mutex<Config>>) -> MainWindow {
 
     ui.on_exit_app(move || {
         slint::quit_event_loop().unwrap();
+    });
+
+    // Auto-hide toast logic
+    let toast_gen = Arc::new(Mutex::new(0u64));
+    let ui_weak = ui.as_weak();
+    ui.on_start_toast_timer(move || {
+        let toast_gen_clone = toast_gen.clone();
+        let ui_weak_clone = ui_weak.clone();
+        let my_gen = {
+            if let Ok(mut g) = toast_gen.lock() {
+                *g += 1;
+                *g
+            } else {
+                0
+            }
+        };
+        if my_gen > 0 {
+            tokio::spawn(async move {
+                tokio::time::sleep(tokio::time::Duration::from_secs(4)).await;
+                if let Ok(g) = toast_gen_clone.lock() {
+                    if *g == my_gen {
+                        let _ =
+                            ui_weak_clone.upgrade_in_event_loop(move |ui| ui.invoke_hide_toast());
+                    }
+                }
+            });
+        }
     });
 
     setup_app_settings_page(&ui, config.clone());
@@ -123,9 +182,23 @@ pub fn setup_window(config: Arc<Mutex<Config>>) -> MainWindow {
     if available.contains(&"xyz.ljones.Anime".to_string()) {
         setup_anime_page(&ui, config.clone());
     }
-    if available.contains(&"xyz.ljones.FanCurves".to_string()) {
-        setup_fan_curve_page(&ui, config);
+    if available.contains(&"xyz.ljones.Slash".to_string()) {
+        setup_slash(&ui, config.clone());
     }
+
+    // Always try to setup supergfx if detected above, but for simplicity here we assume if sidebar has it (re-check or just run)
+    // We didn't capture the boolean above. Let's just run it, it handles its own availability check internally via async proxy creation.
+    setup_supergfx(&ui, config.clone());
+
+    if available.contains(&"xyz.ljones.Backlight".to_string()) {
+        setup_screenpad(&ui, config.clone());
+    }
+
+    if available.contains(&"xyz.ljones.FanCurves".to_string()) {
+        setup_fan_curve_page(&ui, config.clone());
+    }
+
+    setup_status(&ui, config, stats_tx);
 
     ui
 }
@@ -153,18 +226,49 @@ pub fn setup_app_settings_page(ui: &MainWindow, config: Arc<Mutex<Config>>) {
             lock.write();
         }
     });
+
+    // Master notifications toggle
     let config_copy = config.clone();
-    global.on_set_enable_dgpu_notifications(move |enable| {
+    global.on_set_notifications_enabled(move |enable| {
         if let Ok(mut lock) = config_copy.try_lock() {
             lock.notifications.enabled = enable;
             lock.write();
         }
     });
 
+    // Granular notification toggles
+    let config_copy = config.clone();
+    global.on_set_notify_gfx_switch(move |enable| {
+        if let Ok(mut lock) = config_copy.try_lock() {
+            lock.notifications.receive_notify_gfx = enable;
+            lock.write();
+        }
+    });
+
+    let config_copy = config.clone();
+    global.on_set_notify_gfx_status(move |enable| {
+        if let Ok(mut lock) = config_copy.try_lock() {
+            lock.notifications.receive_notify_gfx_status = enable;
+            lock.write();
+        }
+    });
+
+    let config_copy = config.clone();
+    global.on_set_notify_platform_profile(move |enable| {
+        if let Ok(mut lock) = config_copy.try_lock() {
+            lock.notifications.receive_notify_platform_profile = enable;
+            lock.write();
+        }
+    });
+
+    // Initialize UI values from config
     if let Ok(lock) = config.try_lock() {
         global.set_run_in_background(lock.run_in_background);
         global.set_startup_in_background(lock.startup_in_background);
         global.set_enable_tray_icon(lock.enable_tray_icon);
-        global.set_enable_dgpu_notifications(lock.notifications.enabled);
+        global.set_notifications_enabled(lock.notifications.enabled);
+        global.set_notify_gfx_switch(lock.notifications.receive_notify_gfx);
+        global.set_notify_gfx_status(lock.notifications.receive_notify_gfx_status);
+        global.set_notify_platform_profile(lock.notifications.receive_notify_platform_profile);
     }
 }

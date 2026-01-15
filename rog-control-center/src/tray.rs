@@ -59,6 +59,29 @@ struct AsusTray {
     current_title: String,
     current_icon: Icon,
     proxy: ROGCCZbusProxyBlocking<'static>,
+    tray_channel: Option<tokio::sync::mpsc::UnboundedSender<TrayEvent>>,
+    // System stats for native tooltip
+    cpu_temp: String,
+    gpu_temp: String,
+    cpu_fan: String,
+    gpu_fan: String,
+    power_w: String,
+    power_profile: String,
+}
+
+#[derive(Debug, Clone, Copy)]
+pub enum TrayEvent {
+    ToggleTooltip(i32, i32),
+}
+
+#[derive(Debug, Clone, Default)]
+pub struct TrayStats {
+    pub cpu_temp: String,
+    pub gpu_temp: String,
+    pub cpu_fan: String,
+    pub gpu_fan: String,
+    pub power_w: String,
+    pub power_profile: String,
 }
 
 impl ksni::Tray for AsusTray {
@@ -76,6 +99,26 @@ impl ksni::Tray for AsusTray {
 
     fn status(&self) -> ksni::Status {
         ksni::Status::Active
+    }
+
+    fn activate(&mut self, x: i32, y: i32) {
+        if let Some(tx) = &self.tray_channel {
+            let _ = tx.send(TrayEvent::ToggleTooltip(x, y));
+        }
+    }
+
+    fn tool_tip(&self) -> ksni::ToolTip {
+        ksni::ToolTip {
+            title: "ROG Control Center".into(),
+            description: format!(
+                "<b>Profile:</b> {}\n<b>CPU:</b> {}°C | <b>GPU:</b> {}°C\n<b>Fans:</b> {} / {} RPM\n<b>Power:</b> {} W",
+                self.power_profile,
+                self.cpu_temp, self.gpu_temp,
+                self.cpu_fan, self.gpu_fan,
+                self.power_w
+            ),
+            ..Default::default()
+        }
     }
 
     fn menu(&self) -> Vec<ksni::MenuItem<Self>> {
@@ -155,7 +198,12 @@ fn find_dgpu() -> Option<Device> {
 }
 
 /// The tray is controlled somewhat by `Arc<Mutex<SystemState>>`
-pub fn init_tray(_supported_properties: Vec<Properties>, config: Arc<Mutex<Config>>) {
+pub fn init_tray(
+    _supported_properties: Vec<Properties>,
+    config: Arc<Mutex<Config>>,
+    tray_channel: tokio::sync::mpsc::UnboundedSender<TrayEvent>,
+    mut stats_rx: tokio::sync::watch::Receiver<TrayStats>,
+) {
     tokio::spawn(async move {
         let user_con = zbus::blocking::Connection::session().unwrap();
         let proxy = ROGCCZbusProxyBlocking::new(&user_con).unwrap();
@@ -166,6 +214,14 @@ pub fn init_tray(_supported_properties: Vec<Properties>, config: Arc<Mutex<Confi
             current_title: TRAY_LABEL.to_string(),
             current_icon: rog_red.clone(),
             proxy,
+            tray_channel: Some(tray_channel),
+            // Initialize stats fields
+            cpu_temp: "--".into(),
+            gpu_temp: "--".into(),
+            cpu_fan: "--".into(),
+            gpu_fan: "--".into(),
+            power_w: "--".into(),
+            power_profile: "Unknown".into(),
         };
 
         // TODO: return an error to the UI
@@ -225,28 +281,45 @@ pub fn init_tray(_supported_properties: Vec<Properties>, config: Arc<Mutex<Confi
             info!("Started ROGTray");
             let mut last_power = GfxPower::Unknown;
             let dev = find_dgpu();
+
+            // Loop with select! to handle both periodic checks and stats updates
             loop {
-                tokio::time::sleep(Duration::from_millis(1000)).await;
-                if let Ok(lock) = config.try_lock() {
-                    if !lock.enable_tray_icon {
-                        return;
+                tokio::select! {
+                    _ = stats_rx.changed() => {
+                        let stats = stats_rx.borrow().clone();
+                        tray.update(move |t| {
+                            t.cpu_temp = stats.cpu_temp;
+                            t.gpu_temp = stats.gpu_temp;
+                            t.cpu_fan = stats.cpu_fan;
+                            t.gpu_fan = stats.gpu_fan;
+                            t.power_w = stats.power_w;
+                            t.power_profile = stats.power_profile;
+                        }).await;
                     }
-                }
-                if has_supergfx {
-                    if let Ok(mode) = gfx_proxy.mode().await {
-                        if let Ok(power) = gfx_proxy.power().await {
-                            if last_power != power {
-                                set_tray_icon_and_tip(mode, power, &mut tray, has_supergfx).await;
-                                last_power = power;
+                    _ = tokio::time::sleep(Duration::from_millis(1000)) => {
+                        if let Ok(lock) = config.try_lock() {
+                            if !lock.enable_tray_icon {
+                                return;
                             }
                         }
-                    }
-                } else if let Some(dev) = dev.as_ref() {
-                    if let Ok(power) = dev.get_runtime_status() {
-                        if last_power != power {
-                            set_tray_icon_and_tip(GfxMode::Hybrid, power, &mut tray, has_supergfx)
-                                .await;
-                            last_power = power;
+                        // Handle GPU icon updates
+                        if has_supergfx {
+                            if let Ok(mode) = gfx_proxy.mode().await {
+                                if let Ok(power) = gfx_proxy.power().await {
+                                    if last_power != power {
+                                        set_tray_icon_and_tip(mode, power, &mut tray, has_supergfx).await;
+                                        last_power = power;
+                                    }
+                                }
+                            }
+                        } else if let Some(dev) = dev.as_ref() {
+                            if let Ok(power) = dev.get_runtime_status() {
+                                if last_power != power {
+                                    set_tray_icon_and_tip(GfxMode::Hybrid, power, &mut tray, has_supergfx)
+                                        .await;
+                                    last_power = power;
+                                }
+                            }
                         }
                     }
                 }

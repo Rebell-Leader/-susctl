@@ -10,6 +10,7 @@ vendor_*
 .~lock.*
 *.ods#
 *.patch
+*.log
 
 # gnome extension
 node-modules

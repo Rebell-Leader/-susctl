@@ -7,6 +7,9 @@ use rog_dbus::zbus_aura::AuraProxy;
 use slint::{ComponentHandle, Model, RgbaColor, SharedString};
 
 use crate::config::Config;
+use crate::ui::aura_animator::{
+    set_animation_mode, set_animation_speed, start_animator, AnimationMode, AnimatorState,
+};
 use crate::ui::show_toast;
 use crate::{
     set_ui_callbacks, set_ui_props_async, AuraPageData, MainWindow, PowerZones as SlintPowerZones,
@@ -123,8 +126,17 @@ pub fn setup_aura_page(ui: &MainWindow, _states: Arc<Mutex<Config>>) {
                 .ok();
         }
 
+        // Create animator state (shared across callbacks)
+        let animator_state = Arc::new(AnimatorState::default());
+
         if let Ok(modes) = aura.supported_basic_modes().await {
             log::debug!("Available LED modes {modes:?}");
+
+            // Check if only Static mode is available (enable software animation)
+            let static_only = modes.len() == 1 && modes.iter().any(|m| *m == 0.into());
+
+            let handle_for_anim = handle.clone();
+            let animator_state_clone = animator_state.clone();
             handle
                 .upgrade_in_event_loop(move |handle| {
                     let m: Vec<i32> = modes.iter().map(|n| (*n).into()).collect();
@@ -143,6 +155,33 @@ pub fn setup_aura_page(ui: &MainWindow, _states: Arc<Mutex<Config>>) {
                     handle
                         .global::<AuraPageData>()
                         .set_available_mode_names(res.as_slice().into());
+
+                    // Enable software animation if only Static mode is available
+                    if static_only {
+                        info!("Only Static mode available - enabling software animation controls");
+                        handle
+                            .global::<AuraPageData>()
+                            .set_soft_animation_available(true);
+
+                        // Start the animator thread
+                        start_animator(animator_state_clone.clone(), handle_for_anim.clone());
+
+                        // Connect mode callback
+                        let state_for_mode = animator_state_clone.clone();
+                        handle
+                            .global::<AuraPageData>()
+                            .on_cb_soft_animation_mode(move |mode| {
+                                set_animation_mode(&state_for_mode, AnimationMode::from(mode));
+                            });
+
+                        // Connect speed callback
+                        let state_for_speed = animator_state_clone.clone();
+                        handle
+                            .global::<AuraPageData>()
+                            .on_cb_soft_animation_speed(move |speed| {
+                                set_animation_speed(&state_for_speed, speed as u32);
+                            });
+                    }
                 })
                 .map_err(|e| error!("{e:}"))
                 .ok();
