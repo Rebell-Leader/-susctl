@@ -31,6 +31,7 @@ stages:
   - deploy
 
 format:
+  stage: format
   except:
     - tags
   <<: *rust_cache
@@ -42,6 +43,7 @@ format:
     - rm -rf "$CI_PROJECT_DIR/ci-target" || true
 
 check:
+  stage: check
   except:
     - tags
   <<: *rust_cache
@@ -55,6 +57,7 @@ check:
     - rm -rf "$CI_PROJECT_DIR/ci-target" || true
 
 test:
+  stage: test
   except:
     - tags
   <<: *rust_cache
@@ -65,6 +68,7 @@ test:
     - rm -rf "$CI_PROJECT_DIR/ci-target" || true
 
 release:
+  stage: release
   only:
     - tags
   <<: *rust_cache
