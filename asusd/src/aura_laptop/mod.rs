@@ -12,6 +12,7 @@ use tokio::sync::{Mutex, MutexGuard};
 
 use crate::error::RogError;
 
+pub mod animator;
 pub mod config;
 pub mod trait_impls;
 
@@ -20,6 +21,8 @@ pub struct Aura {
     pub hid: Option<Arc<Mutex<HidRaw>>>,
     pub backlight: Option<Arc<Mutex<KeyboardBacklight>>>,
     pub config: Arc<Mutex<AuraConfig>>,
+    /// Animation state for software-controlled effects
+    pub animator: Arc<animator::AnimatorState>,
 }
 
 impl Aura {

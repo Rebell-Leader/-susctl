@@ -1,9 +1,28 @@
-import { SystemDropdown, RogItem, SystemToggle, SystemToggleVert } from "../widgets/common.slint";
+import {
+    SystemDropdown,
+    RogItem,
+    SystemToggle,
+    SystemToggleVert,
+} from "../widgets/common.slint";
 import { Button, ComboBox, VerticalBox, GroupBox } from "std-widgets.slint";
 import { RogPalette } from "../themes/rog_theme.slint";
-import { StyleMetrics, Slider, HorizontalBox, TextEdit, SpinBox, LineEdit, ScrollView } from "std-widgets.slint";
+import {
+    StyleMetrics,
+    Slider,
+    HorizontalBox,
+    TextEdit,
+    SpinBox,
+    LineEdit,
+    ScrollView,
+} from "std-widgets.slint";
 import { ColourSlider } from "../widgets/colour_picker.slint";
-import { AuraPageData, AuraDevType, PowerZones, LaptopAuraPower, AuraEffect } from "../types/aura_types.slint";
+import {
+    AuraPageData,
+    AuraDevType,
+    PowerZones,
+    LaptopAuraPower,
+    AuraEffect,
+} from "../types/aura_types.slint";
 import { AuraPowerGroup, AuraPowerGroupOld } from "../widgets/aura_power.slint";
 
 export component PageAura inherits Rectangle {
@@ -190,44 +209,27 @@ export component PageAura inherits Rectangle {
                 VerticalLayout {
                     padding: 10px;
                     spacing: 8px;
-                    
                     Text {
                         text: @tr("Software Animation (Static-only keyboards)");
                         font-size: 14px;
                         font-weight: 600;
                         color: RogPalette.accent;
                     }
-                    
+
                     HorizontalLayout {
                         spacing: 20px;
-                        
                         VerticalLayout {
                             Text {
                                 text: @tr("Animation Mode");
                                 color: RogPalette.text-secondary;
                             }
+
                             ComboBox {
                                 current_index <=> AuraPageData.soft_animation_mode;
                                 current_value: AuraPageData.soft_animation_modes[self.current-index];
                                 model <=> AuraPageData.soft_animation_modes;
                                 selected => {
                                     AuraPageData.cb_soft_animation_mode(AuraPageData.soft_animation_mode);
-                                }
-                            }
-                        }
-                        
-                        VerticalLayout {
-                            horizontal-stretch: 1;
-                            Text {
-                                text: @tr("Speed: ") + Math.round(AuraPageData.soft_animation_speed) + "ms";
-                                color: RogPalette.text-secondary;
-                            }
-                            Slider {
-                                minimum: 150;
-                                maximum: 1000;
-                                value <=> AuraPageData.soft_animation_speed;
-                                released => {
-                                    AuraPageData.cb_soft_animation_speed(Math.round(AuraPageData.soft_animation_speed));
                                 }
                             }
                         }

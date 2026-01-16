@@ -1,4 +1,3 @@
-pub mod aura_animator;
 pub mod setup_anime;
 pub mod setup_aura;
 pub mod setup_fan_curve_custom;
@@ -6,7 +5,6 @@ pub mod setup_fans;
 pub mod setup_screenpad;
 pub mod setup_slash;
 pub mod setup_status;
-pub mod setup_supergfx;
 pub mod setup_system;
 
 use std::sync::{Arc, Mutex};
@@ -24,7 +22,6 @@ use crate::ui::setup_fans::setup_fan_curve_page;
 use crate::ui::setup_screenpad::setup_screenpad;
 use crate::ui::setup_slash::setup_slash;
 use crate::ui::setup_status::setup_status;
-use crate::ui::setup_supergfx::setup_supergfx;
 use crate::ui::setup_system::{setup_system_page, setup_system_page_callbacks};
 use crate::{AppSettingsPageData, MainWindow};
 
@@ -116,20 +113,7 @@ pub fn setup_window(
             available.contains(&"xyz.ljones.Aura".to_string()),
             available.contains(&"xyz.ljones.Anime".to_string()),
             available.contains(&"xyz.ljones.Slash".to_string()),
-            // Supergfx check
-            {
-                if let Ok(conn) = zbus::blocking::Connection::system() {
-                    zbus::blocking::fdo::DBusProxy::new(&conn)
-                        .ok()
-                        .and_then(|p| {
-                            p.name_has_owner("org.supergfxctl.Daemon".try_into().ok()?)
-                                .ok()
-                        })
-                        .unwrap_or(false)
-                } else {
-                    false
-                }
-            },
+            false,
             // Screenpad check (Backlight interface)
             available.contains(&"xyz.ljones.Backlight".to_string()),
             available.contains(&"xyz.ljones.FanCurves".to_string()),
@@ -186,9 +170,7 @@ pub fn setup_window(
         setup_slash(&ui, config.clone());
     }
 
-    // Always try to setup supergfx if detected above, but for simplicity here we assume if sidebar has it (re-check or just run)
     // We didn't capture the boolean above. Let's just run it, it handles its own availability check internally via async proxy creation.
-    setup_supergfx(&ui, config.clone());
 
     if available.contains(&"xyz.ljones.Backlight".to_string()) {
         setup_screenpad(&ui, config.clone());
@@ -238,22 +220,6 @@ pub fn setup_app_settings_page(ui: &MainWindow, config: Arc<Mutex<Config>>) {
 
     // Granular notification toggles
     let config_copy = config.clone();
-    global.on_set_notify_gfx_switch(move |enable| {
-        if let Ok(mut lock) = config_copy.try_lock() {
-            lock.notifications.receive_notify_gfx = enable;
-            lock.write();
-        }
-    });
-
-    let config_copy = config.clone();
-    global.on_set_notify_gfx_status(move |enable| {
-        if let Ok(mut lock) = config_copy.try_lock() {
-            lock.notifications.receive_notify_gfx_status = enable;
-            lock.write();
-        }
-    });
-
-    let config_copy = config.clone();
     global.on_set_notify_platform_profile(move |enable| {
         if let Ok(mut lock) = config_copy.try_lock() {
             lock.notifications.receive_notify_platform_profile = enable;
@@ -267,8 +233,6 @@ pub fn setup_app_settings_page(ui: &MainWindow, config: Arc<Mutex<Config>>) {
         global.set_startup_in_background(lock.startup_in_background);
         global.set_enable_tray_icon(lock.enable_tray_icon);
         global.set_notifications_enabled(lock.notifications.enabled);
-        global.set_notify_gfx_switch(lock.notifications.receive_notify_gfx);
-        global.set_notify_gfx_status(lock.notifications.receive_notify_gfx_status);
         global.set_notify_platform_profile(lock.notifications.receive_notify_platform_profile);
     }
 }

@@ -1,15 +1,13 @@
 use std::sync::{Arc, Mutex};
 
 use log::{debug, error, info};
+use rog_aura::animation::AnimationMode;
 use rog_aura::keyboard::LaptopAuraPower;
-use rog_aura::{AuraDeviceType, PowerZones};
+use rog_aura::{AuraDeviceType, Colour, PowerZones};
 use rog_dbus::zbus_aura::AuraProxy;
 use slint::{ComponentHandle, Model, RgbaColor, SharedString};
 
 use crate::config::Config;
-use crate::ui::aura_animator::{
-    set_animation_mode, set_animation_speed, start_animator, AnimationMode, AnimatorState,
-};
 use crate::ui::show_toast;
 use crate::{
     set_ui_callbacks, set_ui_props_async, AuraPageData, MainWindow, PowerZones as SlintPowerZones,
@@ -126,17 +124,15 @@ pub fn setup_aura_page(ui: &MainWindow, _states: Arc<Mutex<Config>>) {
                 .ok();
         }
 
-        // Create animator state (shared across callbacks)
-        let animator_state = Arc::new(AnimatorState::default());
-
         if let Ok(modes) = aura.supported_basic_modes().await {
             log::debug!("Available LED modes {modes:?}");
 
             // Check if only Static mode is available (enable software animation)
             let static_only = modes.len() == 1 && modes.iter().any(|m| *m == 0.into());
 
-            let handle_for_anim = handle.clone();
-            let animator_state_clone = animator_state.clone();
+            // Clone proxy for callbacks
+            let aura_for_animation = aura.clone();
+
             handle
                 .upgrade_in_event_loop(move |handle| {
                     let m: Vec<i32> = modes.iter().map(|n| (*n).into()).collect();
@@ -163,23 +159,69 @@ pub fn setup_aura_page(ui: &MainWindow, _states: Arc<Mutex<Config>>) {
                             .global::<AuraPageData>()
                             .set_soft_animation_available(true);
 
-                        // Start the animator thread
-                        start_animator(animator_state_clone.clone(), handle_for_anim.clone());
-
-                        // Connect mode callback
-                        let state_for_mode = animator_state_clone.clone();
+                        // Connect mode callback - uses DBus to start animation in daemon
+                        let aura_mode = aura_for_animation.clone();
+                        let handle_weak = handle.as_weak();
                         handle
                             .global::<AuraPageData>()
                             .on_cb_soft_animation_mode(move |mode| {
-                                set_animation_mode(&state_for_mode, AnimationMode::from(mode));
-                            });
+                                let aura_inner = aura_mode.clone();
+                                let handle = match handle_weak.upgrade() {
+                                    Some(h) => h,
+                                    None => return,
+                                };
 
-                        // Connect speed callback
-                        let state_for_speed = animator_state_clone.clone();
-                        handle
-                            .global::<AuraPageData>()
-                            .on_cb_soft_animation_speed(move |speed| {
-                                set_animation_speed(&state_for_speed, speed as u32);
+                                let data = handle.global::<AuraPageData>().get_led_mode_data();
+                                let c1 = data.colour1;
+                                let c2 = data.colour2;
+
+                                let c1_rog = Colour {
+                                    r: c1.red(),
+                                    g: c1.green(),
+                                    b: c1.blue(),
+                                };
+                                let c2_rog = Colour {
+                                    r: c2.red(),
+                                    g: c2.green(),
+                                    b: c2.blue(),
+                                };
+
+                                let anim_mode = match mode {
+                                    1 => AnimationMode::Rainbow { speed_ms: 100 },
+                                    2 => AnimationMode::ColorCycle {
+                                        speed_ms: 200,
+                                        colors: vec![
+                                            Colour { r: 255, g: 0, b: 0 },
+                                            Colour { r: 0, g: 255, b: 0 },
+                                            Colour { r: 0, g: 0, b: 255 },
+                                        ],
+                                    },
+                                    3 => AnimationMode::Breathe {
+                                        speed_ms: 100,
+                                        color1: c1_rog,
+                                        color2: c2_rog,
+                                    },
+                                    4 => AnimationMode::Pulse {
+                                        speed_ms: 50,
+                                        color: c1_rog,
+                                        min_brightness: 0.2,
+                                        max_brightness: 1.0,
+                                    },
+                                    _ => AnimationMode::None,
+                                };
+                                tokio::spawn(async move {
+                                    let json =
+                                        serde_json::to_string(&anim_mode).unwrap_or_default();
+                                    if anim_mode == AnimationMode::None {
+                                        if let Err(e) = aura_inner.stop_animation().await {
+                                            error!("Failed to stop animation: {e}");
+                                        }
+                                    } else {
+                                        if let Err(e) = aura_inner.start_animation(json).await {
+                                            error!("Failed to start animation: {e}");
+                                        }
+                                    }
+                                });
                             });
                     }
                 })
@@ -204,12 +246,79 @@ pub fn setup_aura_page(ui: &MainWindow, _states: Arc<Mutex<Config>>) {
                     "Setting keyboard LEDmode failed"
                 );
 
-                set_ui_callbacks!(handle,
-                    AuraPageData(.into()),
-                    proxy_copy.led_mode_data(.into()),
-                    "Keyboard LED mode set to {:?}",
-                    "Setting keyboard LED mode failed"
-                );
+                let proxy_data = proxy_copy.clone();
+                let aura_soft = proxy_copy.clone();
+                let handle_weak = handle.as_weak();
+
+                handle
+                    .global::<AuraPageData>()
+                    .on_cb_led_mode_data(move |data| {
+                        // 1. Update hardware mode
+                        let p = proxy_data.clone();
+                        let d = data.clone();
+                        tokio::spawn(async move {
+                            if let Err(e) = p.set_led_mode_data(d.into()).await {
+                                error!("Setting keyboard LED mode failed: {e}");
+                            } else {
+                                debug!("Keyboard LED mode set");
+                            }
+                        });
+
+                        // 2. Update software animation if active
+                        let handle = match handle_weak.upgrade() {
+                            Some(h) => h,
+                            None => return,
+                        };
+
+                        let soft_mode = handle.global::<AuraPageData>().get_soft_animation_mode();
+                        if soft_mode != 0 {
+                            let c1 = data.colour1;
+                            let c2 = data.colour2;
+                            let c1_rog = Colour {
+                                r: c1.red(),
+                                g: c1.green(),
+                                b: c1.blue(),
+                            };
+                            let c2_rog = Colour {
+                                r: c2.red(),
+                                g: c2.green(),
+                                b: c2.blue(),
+                            };
+
+                            let anim_mode = match soft_mode {
+                                1 => AnimationMode::Rainbow { speed_ms: 100 },
+                                2 => AnimationMode::ColorCycle {
+                                    speed_ms: 200,
+                                    colors: vec![
+                                        Colour { r: 255, g: 0, b: 0 },
+                                        Colour { r: 0, g: 255, b: 0 },
+                                        Colour { r: 0, g: 0, b: 255 },
+                                    ],
+                                },
+                                3 => AnimationMode::Breathe {
+                                    speed_ms: 100,
+                                    color1: c1_rog,
+                                    color2: c2_rog,
+                                },
+                                4 => AnimationMode::Pulse {
+                                    speed_ms: 50,
+                                    color: c1_rog,
+                                    min_brightness: 0.2,
+                                    max_brightness: 1.0,
+                                },
+                                _ => AnimationMode::None,
+                            };
+
+                            let aura_s = aura_soft.clone();
+                            tokio::spawn(async move {
+                                if let Ok(json) = serde_json::to_string(&anim_mode) {
+                                    if let Err(e) = aura_s.start_animation(json).await {
+                                        error!("Failed to update software animation: {e}");
+                                    }
+                                }
+                            });
+                        }
+                    });
 
                 // set_ui_callbacks!(handle,
                 //     AuraPageData(.clone().into()),

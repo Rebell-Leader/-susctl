@@ -16,6 +16,10 @@ pub mod effects;
 mod builtin_modes;
 pub use builtin_modes::*;
 
+/// Software-controlled animation modes for daemon
+pub mod animation;
+pub use animation::{apply_brightness, hsv_to_rgb, lerp_colour, AnimationMode};
+
 /// Helper for detecting what is available
 pub mod aura_detection;
 pub mod error;
