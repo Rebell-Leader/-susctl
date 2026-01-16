@@ -11,9 +11,10 @@ use crate::Colour;
 ///
 /// Note: This type is serialized as JSON for DBus transport since zvariant
 /// doesn't support enums with heterogeneous variants.
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 pub enum AnimationMode {
     /// No animation running
+    #[default]
     None,
     /// Rainbow effect - cycles through HSV hue (0-360°)
     Rainbow {
@@ -49,11 +50,6 @@ pub enum AnimationMode {
     },
 }
 
-impl Default for AnimationMode {
-    fn default() -> Self {
-        Self::None
-    }
-}
 
 impl AnimationMode {
     /// Returns true if this is an active animation mode
