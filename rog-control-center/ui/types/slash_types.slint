@@ -1,0 +1,49 @@
+export global SlashPageData {
+    in-out property <bool> enabled;
+    callback cb_enabled(bool);
+    
+    in-out property <float> brightness;
+    callback cb_brightness(float);
+    
+    in-out property <float> interval;
+    callback cb_interval(float);
+    
+    in-out property <[string]> modes: [
+        @tr("Static"),
+        @tr("Bounce"),
+        @tr("Slash"),
+        @tr("Loading"),
+        @tr("BitStream"),
+        @tr("Transmission"),
+        @tr("Flow"),
+        @tr("Flux"),
+        @tr("Phantom"),
+        @tr("Spectrum"),
+        @tr("Hazard"),
+        @tr("Interfacing"),
+        @tr("Ramp"),
+        @tr("GameOver"),
+        @tr("Start"),
+        @tr("Buzzer"),
+    ];
+    in-out property <int> mode_index;
+    callback cb_mode_index(int);
+
+    in-out property <bool> show_battery_warning;
+    callback cb_show_battery_warning(bool);
+
+    in-out property <bool> show_on_battery;
+    callback cb_show_on_battery(bool);
+
+    in-out property <bool> show_on_boot;
+    callback cb_show_on_boot(bool);
+
+    in-out property <bool> show_on_shutdown;
+    callback cb_show_on_shutdown(bool);
+
+    in-out property <bool> show_on_sleep;
+    callback cb_show_on_sleep(bool);
+
+    in-out property <bool> show_on_lid_closed;
+    callback cb_show_on_lid_closed(bool);
+}

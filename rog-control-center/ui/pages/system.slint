@@ -1,5 +1,6 @@
 import { SystemSlider, SystemDropdown, SystemToggle, SystemToggleInt, RogItem } from "../widgets/common.slint";
 import { Palette, HorizontalBox , VerticalBox, ScrollView, Slider, Button, Switch, ComboBox, GroupBox, StandardButton} from "std-widgets.slint";
+import { RogPalette } from "../themes/rog_theme.slint";
 
 export struct AttrMinMax {
   min: int,
@@ -66,13 +67,6 @@ export global SystemPageData {
     in-out property <int> mini_led_mode;
     callback cb_mini_led_mode(int);
 
-    in-out property <float> screenpad_gamma;
-    callback cb_screenpad_gamma(float);
-    // percentage
-    in-out property <int> screenpad_brightness: 50;
-    callback cb_screenpad_brightness(int);
-    in-out property <bool> screenpad_sync_with_primary: false;
-    callback cb_screenpad_sync_with_primary(bool);
 
     in-out property <bool> asus_armoury_loaded: false;
 
@@ -157,18 +151,22 @@ export component PageSystem inherits Rectangle {
     ScrollView {
         VerticalLayout {
             padding: 10px;
+            padding-top: 40px;
+            padding-bottom: 40px;
             spacing: 10px;
             alignment: LayoutAlignment.start;
             Rectangle {
-                background: Palette.alternate-background;
-                border-color: Palette.accent-background;
-                border-width: 3px;
-                border-radius: 10px;
-                height: 40px;
+                background: RogPalette.control-background;
+                border-color: RogPalette.control-border;
+                border-width: 1px;
+                border-radius: 8px;
+                height: 46px;
                 Text {
                     font-size: 18px;
-                    color: Palette.control-foreground;
+                    color: RogPalette.accent;
                     horizontal-alignment: TextHorizontalAlignment.center;
+                    vertical-alignment: TextVerticalAlignment.center;
+                    font-weight: 700;
                     text: @tr("Power settings");
                 }
             }
@@ -207,62 +205,18 @@ export component PageSystem inherits Rectangle {
                 }
             }
 
-            if SystemPageData.screenpad_brightness != -1: RogItem {
-                HorizontalLayout {
-                    padding-left: 10px;
-                    padding-right: 20px;
-                    HorizontalLayout {
-                        width: 38%;
-                        alignment: LayoutAlignment.space-between;
-                        padding-right: 15px;
-                        Text {
-                            font-size: 16px;
-                            vertical-alignment: TextVerticalAlignment.center;
-                            color: Palette.control-foreground;
-                            text: @tr("Screenpad brightness");
-                        }
-                    }
-
-                    HorizontalLayout {
-                        width: 38%;
-                        alignment: LayoutAlignment.stretch;
-                        screen_bright := Slider {
-                            enabled: true;
-                            minimum: 0;
-                            maximum: 100;
-                            value: SystemPageData.screenpad_brightness;
-                            released(value) => {
-                                // SystemPageData.screenpad_brightness = self.value;
-                                SystemPageData.cb_screenpad_brightness(Math.floor(self.value));
-                            }
-                        }
-                    }
-
-                    HorizontalLayout {
-                    width: 20%;
-                    padding-left: 10px;
-                        alignment: LayoutAlignment.stretch;
-                        Switch {
-                            text: @tr("Sync with primary");
-                            checked <=> SystemPageData.screenpad_sync_with_primary;
-                            toggled => {
-                                SystemPageData.cb_screenpad_sync_with_primary(self.checked);
-                            }
-                        }
-                    }
-                }
-            }
-
             Rectangle {
-                background: Palette.alternate-background;
-                border-color: Palette.accent-background;
-                border-width: 3px;
-                border-radius: 10px;
-                height: 40px;
+                background: RogPalette.control-background;
+                border-color: RogPalette.control-border;
+                border-width: 1px;
+                border-radius: 8px;
+                height: 46px;
                 Text {
                     font-size: 18px;
-                    color: Palette.control-foreground;
+                    color: RogPalette.accent;
                     horizontal-alignment: TextHorizontalAlignment.center;
+                    vertical-alignment: TextVerticalAlignment.center;
+                    font-weight: 700;
                     text: @tr("Armoury settings");
                 }
             }
@@ -377,6 +331,7 @@ export component PageSystem inherits Rectangle {
                     Text {
                         font-size: 16px;
                         text: @tr("ppt_warning" => "The following settings are not applied until the toggle is enabled.");
+                        color: RogPalette.text-primary;
                     }
                 }
 
@@ -545,7 +500,7 @@ export component PageSystem inherits Rectangle {
     if root.show_fade_cover: Rectangle {
         width: 100%;
         height: 100%;
-        background: Palette.background;
+        background: RogPalette.background;
         opacity: 0.9;
         TouchArea {
             height: 100%;
@@ -578,6 +533,7 @@ export component PageSystem inherits Rectangle {
                             horizontal-alignment: TextHorizontalAlignment.center;
                             vertical-alignment: TextVerticalAlignment.center;
                             text: @tr("Energy Performance Preference linked to Throttle Policy");
+                            color: RogPalette.text-primary;
                         }
 
                         SystemToggle {
@@ -628,6 +584,7 @@ export component PageSystem inherits Rectangle {
                             horizontal-alignment: TextHorizontalAlignment.center;
                             vertical-alignment: TextVerticalAlignment.center;
                             text: @tr("Throttle Policy for power state");
+                            color: RogPalette.text-primary;
                         }
 
                         HorizontalLayout {

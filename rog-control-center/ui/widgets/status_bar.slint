@@ -1,0 +1,58 @@
+import { RogPalette } from "../themes/rog_theme.slint";
+
+export global SystemStatus {
+    in property <int> cpu_temp: 0;
+    in property <int> gpu_temp: 0;
+    in property <int> cpu_fan: 0;
+    in property <int> gpu_fan: 0;
+    in property <string> power_w: "--";
+    in property <string> power_avg_w: "--";
+}
+
+component StatusItem inherits Rectangle {
+    in property <string> label;
+    in property <string> value;
+    in property <string> unit;
+    
+    HorizontalLayout {
+        spacing: 5px;
+        Text { text: label; color: RogPalette.text-secondary; font-weight: 700; vertical-alignment: center; }
+        Text { text: value; color: RogPalette.text-primary; vertical-alignment: center; }
+        Text { text: unit; color: RogPalette.text-secondary; font-size: 12px; vertical-alignment: center; }
+    }
+}
+
+export component StatusBar inherits Rectangle {
+    background: RogPalette.control-background;
+    height: 30px;
+    
+    // Simulated top border
+    Rectangle {
+        y: 0px;
+        x: 0px;
+        width: parent.width;
+        height: 1px;
+        background: RogPalette.control-border;
+    }
+    
+    HorizontalLayout {
+        padding-left: 20px;
+        padding-right: 20px;
+        spacing: 20px;
+        alignment: space-between;
+        
+        HorizontalLayout {
+            spacing: 20px;
+            StatusItem { label: "CPU"; value: SystemStatus.cpu_temp; unit: "°C"; }
+            StatusItem { label: "GPU"; value: SystemStatus.gpu_temp; unit: "°C"; }
+        }
+
+        HorizontalLayout {
+             spacing: 20px;
+             StatusItem { label: "PWR"; value: SystemStatus.power_w; unit: "W"; }
+             StatusItem { label: "AVG"; value: SystemStatus.power_avg_w; unit: "W"; }
+             StatusItem { label: "CPU Fan"; value: SystemStatus.cpu_fan; unit: "RPM"; }
+             StatusItem { label: "GPU Fan"; value: SystemStatus.gpu_fan; unit: "RPM"; }
+        }
+    }
+}

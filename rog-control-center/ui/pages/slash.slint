@@ -1,0 +1,114 @@
+import { SystemToggle, SystemSlider, SystemDropdown, RogItem } from "../widgets/common.slint";
+import { VerticalBox, ScrollView, GroupBox } from "std-widgets.slint";
+import { RogPalette } from "../themes/rog_theme.slint";
+import { SlashPageData } from "../types/slash_types.slint";
+
+export { SlashPageData }
+
+export component PageSlash inherits Rectangle {
+    background: RogPalette.background;
+    
+    ScrollView {
+        VerticalBox {
+            padding: 20px;
+            spacing: 20px;
+            alignment: start;
+
+            // Header
+            Rectangle {
+                height: 40px;
+                background: RogPalette.control-background;
+                border-radius: RogPalette.border-radius;
+                border-width: 1px;
+                border-color: RogPalette.control-border;
+                
+                Text {
+                    text: @tr("Slash Lighting Control");
+                    color: RogPalette.accent;
+                    font-size: 18px;
+                    font-weight: 700;
+                    horizontal-alignment: center;
+                    vertical-alignment: center;
+                }
+            }
+
+            // Main Control
+            RogItem {
+                VerticalBox {
+                    SystemToggle {
+                        text: @tr("Enable Slash Lighting");
+                        checked <=> SlashPageData.enabled;
+                        toggled => { SlashPageData.cb_enabled(self.checked); }
+                    }
+
+                    SystemDropdown {
+                        text: @tr("Lighting Mode");
+                        model <=> SlashPageData.modes;
+                        current_index <=> SlashPageData.mode_index;
+                        current_value: SlashPageData.modes[SlashPageData.mode_index];
+                        selected => {
+                            SlashPageData.cb_mode_index(self.current_index);
+                        }
+                    }
+
+                    SystemSlider {
+                        title: @tr("Brightness");
+                        text: @tr("Brightness");
+                        value <=> SlashPageData.brightness;
+                        minimum: 0;
+                        maximum: 255;
+                        help_text: "";
+                        released(val) => { SlashPageData.cb_brightness(val); }
+                    }
+
+                    SystemSlider {
+                        title: @tr("Interval / Speed");
+                        text: @tr("Interval / Speed");
+                        value <=> SlashPageData.interval;
+                        minimum: 0;
+                        maximum: 255;
+                        help_text: "";
+                        released(val) => { SlashPageData.cb_interval(val); }
+                    }
+                }
+            }
+
+            // Behaviors
+            GroupBox {
+                title: @tr("Behavior Settings");
+                VerticalBox {
+                    SystemToggle {
+                        text: @tr("Show Battery Warning");
+                        checked <=> SlashPageData.show_battery_warning;
+                        toggled => { SlashPageData.cb_show_battery_warning(self.checked); }
+                    }
+                    SystemToggle {
+                        text: @tr("Active on Battery");
+                        checked <=> SlashPageData.show_on_battery;
+                        toggled => { SlashPageData.cb_show_on_battery(self.checked); }
+                    }
+                    SystemToggle {
+                        text: @tr("Active on Boot");
+                        checked <=> SlashPageData.show_on_boot;
+                        toggled => { SlashPageData.cb_show_on_boot(self.checked); }
+                    }
+                    SystemToggle {
+                        text: @tr("Active on Shutdown");
+                        checked <=> SlashPageData.show_on_shutdown;
+                        toggled => { SlashPageData.cb_show_on_shutdown(self.checked); }
+                    }
+                    SystemToggle {
+                        text: @tr("Active on Sleep");
+                        checked <=> SlashPageData.show_on_sleep;
+                        toggled => { SlashPageData.cb_show_on_sleep(self.checked); }
+                    }
+                    SystemToggle {
+                        text: @tr("Active when Lid Closed");
+                        checked <=> SlashPageData.show_on_lid_closed;
+                        toggled => { SlashPageData.cb_show_on_lid_closed(self.checked); }
+                    }
+                }
+            }
+        }
+    }
+}

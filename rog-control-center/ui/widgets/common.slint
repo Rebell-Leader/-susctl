@@ -1,12 +1,15 @@
-import { Palette, VerticalBox , StandardButton, Button, HorizontalBox, ComboBox, Switch, Slider} from "std-widgets.slint";
+import { VerticalBox , StandardButton, Button, HorizontalBox, ComboBox, Switch, Slider} from "std-widgets.slint";
+import { RogPalette } from "../themes/rog_theme.slint";
 
 export component RogItem inherits Rectangle {
-    background: Palette.control-background;
-    border-color: Palette.border;
-    border-width: 3px;
-    border-radius: 10px;
+    in property <bool> enabled: true;
+    background: root.enabled ? RogPalette.control-background : RogPalette.control-background.darker(0.5);
+    border-color: root.enabled ? RogPalette.control-border : RogPalette.control-border.darker(0.3);
+    border-width: 1px; // Thinner border for modern look
+    border-radius: RogPalette.border-radius;
     min-height: 48px;
     max-height: 56px;
+    opacity: root.enabled ? 1.0 : 0.6;
 }
 
 export component SystemSlider inherits RogItem {
@@ -18,7 +21,6 @@ export component SystemSlider inherits RogItem {
     callback released(float);
 
     in property <string> help_text;
-    in property <bool> enabled: true;
     in property <bool> has_reset: false;
     callback cb_do_reset();
 
@@ -32,7 +34,7 @@ export component SystemSlider inherits RogItem {
                 Text {
                     font-size: 16px;
                     vertical-alignment: TextVerticalAlignment.center;
-                    color: Palette.control-foreground;
+                    color: RogPalette.text-primary;
                     text: root.text;
                 }
 
@@ -40,7 +42,7 @@ export component SystemSlider inherits RogItem {
                     font-size: 16px;
                     horizontal-alignment: TextHorizontalAlignment.right;
                     vertical-alignment: TextVerticalAlignment.center;
-                    color: Palette.control-foreground;
+                    color: RogPalette.accent;
                     text: "\{Math.round(root.value)}";
                 }
             }
@@ -64,10 +66,11 @@ export component SystemSlider inherits RogItem {
             y: help.y - self.height + help.height - 10px;
             Rectangle {
                 drop-shadow-blur: 10px;
-                drop-shadow-color: black;
-                border-radius: 10px;
-                border-color: Palette.accent-background;
-                background: Palette.background;
+                drop-shadow-color: Colors.black;
+                border-radius: RogPalette.border-radius;
+                border-width: 1px;
+                border-color: RogPalette.accent;
+                background: RogPalette.control-background;
                 Dialog {
                     title: root.title;
                     VerticalBox {
@@ -77,12 +80,12 @@ export component SystemSlider inherits RogItem {
                             wrap: TextWrap.word-wrap;
                             horizontal-alignment: TextHorizontalAlignment.center;
                             text: root.title;
+                            color: RogPalette.text-primary;
                         }
 
                         Rectangle {
                             height: 1px;
-                            border-color: black;
-                            border-width: 1px;
+                            background: RogPalette.control-border;
                         }
 
                         Text {
@@ -90,6 +93,7 @@ export component SystemSlider inherits RogItem {
                             font-size: 16px;
                             wrap: TextWrap.word-wrap;
                             text: root.help_text;
+                            color: RogPalette.text-secondary;
                         }
                     }
 
@@ -114,16 +118,18 @@ export component SystemSlider inherits RogItem {
             y: reset.y - self.height + reset.height;
             Rectangle {
                 drop-shadow-blur: 10px;
-                drop-shadow-color: black;
-                border-radius: 10px;
-                border-color: Palette.accent-background;
-                background: Palette.background;
+                drop-shadow-color: Colors.black;
+                border-radius: RogPalette.border-radius;
+                border-width: 1px;
+                border-color: RogPalette.accent;
+                background: RogPalette.control-background;
                 Dialog {
                     Text {
                         max-width: 420px;
                         font-size: 16px;
                         wrap: TextWrap.word-wrap;
                         text: @tr("confirm_reset" => "Are you sure you want to reset this?");
+                        color: RogPalette.text-primary;
                     }
 
                     StandardButton {
@@ -164,7 +170,7 @@ export component SystemToggle inherits RogItem {
             Text {
                 font-size: 16px;
                 vertical-alignment: TextVerticalAlignment.center;
-                color: Palette.control-foreground;
+                color: RogPalette.text-primary;
                 text: root.text;
             }
         }
@@ -195,7 +201,7 @@ export component SystemToggleInt inherits RogItem {
             Text {
                 font-size: 16px;
                 vertical-alignment: TextVerticalAlignment.center;
-                color: Palette.control-foreground;
+                color: RogPalette.text-primary;
                 text: root.text;
             }
         }
@@ -226,7 +232,7 @@ export component SystemToggleVert inherits RogItem {
             font-size: 16px;
             vertical-alignment: TextVerticalAlignment.bottom;
             horizontal-alignment: TextHorizontalAlignment.center;
-            color: Palette.control-foreground;
+            color: RogPalette.text-primary;
             text: root.text;
         }
 
@@ -256,7 +262,7 @@ export component SystemDropdown inherits RogItem {
             Text {
                 font-size: 16px;
                 vertical-alignment: TextVerticalAlignment.center;
-                color: Palette.control-foreground;
+                color: RogPalette.text-primary;
                 text: root.text;
             }
         }
@@ -288,9 +294,9 @@ export component PopupNotification {
         height: root.height;
         // TODO: add properties to display
         Rectangle {
-            border-width: 2px;
-            border-color: Palette.accent-background;
-            background: Palette.background;
+            border-width: 1px;
+            border-color: RogPalette.accent;
+            background: RogPalette.background;
             // TODO: drop shadows slow
             // drop-shadow-offset-x: 7px;
             // drop-shadow-offset-y: 7px;
@@ -302,14 +308,14 @@ export component PopupNotification {
                         alignment: start;
                         Text {
                             text: heading;
-                            color: Palette.control-foreground;
+                            color: RogPalette.text-primary;
                             font-size: 32px;
                             font-weight: 900;
                         }
 
                         Text {
                             text: content;
-                            color: Palette.control-foreground;
+                            color: RogPalette.text-secondary;
                             font-size: 18px;
                         }
                     }

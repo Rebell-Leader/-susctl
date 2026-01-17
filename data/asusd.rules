@@ -19,4 +19,11 @@ LABEL="asusd_start"
 ACTION=="add|change", DRIVER=="asus-nb-wmi", TAG+="systemd", ENV{SYSTEMD_WANTS}+="asusd.service"
 ACTION=="add|remove", DRIVER=="asus-nb-wmi", TAG+="systemd", ENV{SYSTEMD_WANTS}+="asusd.service"
 
+# ASUS Custom Fan Curve Control - Grant user write access
+# This allows rog-control-center to adjust fan curves without sudo
+SUBSYSTEM=="hwmon", ATTR{name}=="asus_custom_fan_curve", \
+    RUN+="/bin/sh -c 'chmod 0666 /sys%p/pwm*'", \
+    RUN+="/bin/sh -c 'chmod 0666 /sys%p/temp*_auto_point*_pwm'", \
+    RUN+="/bin/sh -c 'chmod 0666 /sys%p/temp*_auto_point*_temp'"
+
 LABEL="asusd_end"

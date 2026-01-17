@@ -1,5 +1,5 @@
 [workspace.package]
-version = "6.3.0"
+version = "6.4.0"
 rust-version = "1.82"
 license = "MPL-2.0"
 readme = "README.md"
@@ -40,6 +40,9 @@ tokio = { version = "^1.39.0", default-features = false, features = [
   "time",
   "rt",
   "rt-multi-thread",
+  "fs",
+  "io-util",
+  "io-util",
 ] }
 concat-idents = "^1.1"
 dirs = "^4.0"

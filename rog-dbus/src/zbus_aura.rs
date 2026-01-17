@@ -84,6 +84,21 @@ pub trait Aura {
     /// SupportedPowerZones property
     #[zbus(property)]
     fn supported_power_zones(&self) -> zbus::Result<Vec<PowerZones>>;
+
+    /// Start a software-controlled animation in the daemon
+    /// `mode_json` is a JSON-serialized AnimationMode
+    fn start_animation(&self, mode_json: String) -> zbus::Result<()>;
+
+    /// Stop any running animation
+    fn stop_animation(&self) -> zbus::Result<()>;
+
+    /// AnimationRunning property - check if animation is active
+    #[zbus(property)]
+    fn animation_running(&self) -> zbus::Result<bool>;
+
+    /// AnimationMode property - get current animation mode as JSON
+    #[zbus(property)]
+    fn animation_mode(&self) -> zbus::Result<String>;
 }
 
 pub struct AuraProxyPerkey<'a>(AuraProxyBlocking<'a>);

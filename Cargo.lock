@@ -212,7 +212,7 @@ dependencies = [
 
 [[package]]
 name = "asusctl"
-version = "6.3.0"
+version = "6.4.0"
 dependencies = [
  "argh",
  "dmi_id",
@@ -232,7 +232,7 @@ dependencies = [
 
 [[package]]
 name = "asusd"
-version = "6.3.0"
+version = "6.4.0"
 dependencies = [
  "cargo-husky",
  "concat-idents",
@@ -252,6 +252,7 @@ dependencies = [
  "rog_scsi",
  "rog_slash",
  "serde",
+ "serde_json",
  "tokio",
  "udev 0.8.0",
  "zbus",
@@ -259,7 +260,7 @@ dependencies = [
 
 [[package]]
 name = "asusd-user"
-version = "6.3.0"
+version = "6.4.0"
 dependencies = [
  "config-traits",
  "dirs",
@@ -938,7 +939,7 @@ dependencies = [
 
 [[package]]
 name = "config-traits"
-version = "6.3.0"
+version = "6.4.0"
 dependencies = [
  "log",
  "ron",
@@ -1274,7 +1275,7 @@ dependencies = [
 
 [[package]]
 name = "dmi_id"
-version = "6.3.0"
+version = "6.4.0"
 dependencies = [
  "log",
  "udev 0.8.0",
@@ -4482,7 +4483,7 @@ dependencies = [
 
 [[package]]
 name = "rog-control-center"
-version = "6.3.0"
+version = "6.4.0"
 dependencies = [
  "asusd",
  "concat-idents",
@@ -4502,7 +4503,10 @@ dependencies = [
  "rog_dbus",
  "rog_platform",
  "rog_profiles",
+ "rog_slash",
+ "ron",
  "serde",
+ "serde_json",
  "slint",
  "slint-build",
  "supergfxctl",
@@ -4513,7 +4517,7 @@ dependencies = [
 
 [[package]]
 name = "rog_anime"
-version = "6.3.0"
+version = "6.4.0"
 dependencies = [
  "dmi_id",
  "gif 0.12.0",
@@ -4527,7 +4531,7 @@ dependencies = [
 
 [[package]]
 name = "rog_aura"
-version = "6.3.0"
+version = "6.4.0"
 dependencies = [
  "dmi_id",
  "log",
@@ -4538,7 +4542,7 @@ dependencies = [
 
 [[package]]
 name = "rog_dbus"
-version = "6.3.0"
+version = "6.4.0"
 dependencies = [
  "asusd",
  "rog_anime",
@@ -4552,7 +4556,7 @@ dependencies = [
 
 [[package]]
 name = "rog_platform"
-version = "6.3.0"
+version = "6.4.0"
 dependencies = [
  "concat-idents",
  "inotify",
@@ -4565,7 +4569,7 @@ dependencies = [
 
 [[package]]
 name = "rog_profiles"
-version = "6.3.0"
+version = "6.4.0"
 dependencies = [
  "log",
  "rog_platform",
@@ -4576,7 +4580,7 @@ dependencies = [
 
 [[package]]
 name = "rog_scsi"
-version = "6.3.0"
+version = "6.4.0"
 dependencies = [
  "ron",
  "serde",
@@ -4586,7 +4590,7 @@ dependencies = [
 
 [[package]]
 name = "rog_simulators"
-version = "6.3.0"
+version = "6.4.0"
 dependencies = [
  "log",
  "rog_anime",
@@ -4596,7 +4600,7 @@ dependencies = [
 
 [[package]]
 name = "rog_slash"
-version = "6.3.0"
+version = "6.4.0"
 dependencies = [
  "dmi_id",
  "serde",

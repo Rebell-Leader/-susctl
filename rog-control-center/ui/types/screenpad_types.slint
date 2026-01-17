@@ -1,0 +1,13 @@
+import { RogPalette } from "../themes/rog_theme.slint";
+
+export global ScreenpadPageData {
+    in-out property <int> brightness: -1;
+    in-out property <float> gamma: 1.0;
+    in-out property <bool> sync_with_primary: false;
+    in-out property <bool> power: true;
+
+    callback cb_brightness(int);
+    callback cb_gamma(float);
+    callback cb_sync_with_primary(bool);
+    callback cb_power(bool);
+}

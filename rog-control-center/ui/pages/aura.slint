@@ -1,8 +1,28 @@
-import { SystemDropdown, RogItem, SystemToggle, SystemToggleVert } from "../widgets/common.slint";
-import { Palette, Button, ComboBox, VerticalBox, GroupBox } from "std-widgets.slint";
-import { StyleMetrics, Slider, HorizontalBox, TextEdit, SpinBox, LineEdit, ScrollView } from "std-widgets.slint";
+import {
+    SystemDropdown,
+    RogItem,
+    SystemToggle,
+    SystemToggleVert,
+} from "../widgets/common.slint";
+import { Button, ComboBox, VerticalBox, GroupBox } from "std-widgets.slint";
+import { RogPalette } from "../themes/rog_theme.slint";
+import {
+    StyleMetrics,
+    Slider,
+    HorizontalBox,
+    TextEdit,
+    SpinBox,
+    LineEdit,
+    ScrollView,
+} from "std-widgets.slint";
 import { ColourSlider } from "../widgets/colour_picker.slint";
-import { AuraPageData, AuraDevType, PowerZones, LaptopAuraPower, AuraEffect } from "../types/aura_types.slint";
+import {
+    AuraPageData,
+    AuraDevType,
+    PowerZones,
+    LaptopAuraPower,
+    AuraEffect,
+} from "../types/aura_types.slint";
 import { AuraPowerGroup, AuraPowerGroupOld } from "../widgets/aura_power.slint";
 
 export component PageAura inherits Rectangle {
@@ -183,6 +203,40 @@ export component PageAura inherits Rectangle {
                 }
             }
 
+            // Software Animation Controls (for Static-only keyboards)
+            if AuraPageData.soft_animation_available: RogItem {
+                min-height: 100px;
+                VerticalLayout {
+                    padding: 10px;
+                    spacing: 8px;
+                    Text {
+                        text: @tr("Software Animation (Static-only keyboards)");
+                        font-size: 14px;
+                        font-weight: 600;
+                        color: RogPalette.accent;
+                    }
+
+                    HorizontalLayout {
+                        spacing: 20px;
+                        VerticalLayout {
+                            Text {
+                                text: @tr("Animation Mode");
+                                color: RogPalette.text-secondary;
+                            }
+
+                            ComboBox {
+                                current_index <=> AuraPageData.soft_animation_mode;
+                                current_value: AuraPageData.soft_animation_modes[self.current-index];
+                                model <=> AuraPageData.soft_animation_modes;
+                                selected => {
+                                    AuraPageData.cb_soft_animation_mode(AuraPageData.soft_animation_mode);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
             HorizontalLayout {
                 Button {
                     text: @tr("Power Settings");
@@ -195,11 +249,15 @@ export component PageAura inherits Rectangle {
         }
 
         if root.show_fade_cover: Rectangle {
-            background: Palette.background;
+            background: RogPalette.background;
             opacity: 0.8;
             TouchArea {
                 height: 100%;
                 width: 100%;
+                clicked => {
+                    root.show_fade_cover = false;
+                    root.show_aura_power = false;
+                }
             }
         }
     }
@@ -266,7 +324,10 @@ export component PageAura inherits Rectangle {
                 alignment: LayoutAlignment.start;
 
                 Text {
-                    text: "TODO: In progress";
+                    text: "LED Power Zones (Legacy)";
+                    font-size: 16px;
+                    font-weight: 600;
+                    color: #ff0033;
                 }
 
                 for state[idx] in AuraPageData.led_power.states: old_zone := AuraPowerGroupOld {
