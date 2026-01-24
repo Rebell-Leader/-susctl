@@ -1,0 +1,10 @@
+export global SupergfxPageData {
+    in-out property <string> current_mode: "Hybrid";
+    in-out property <[string]> supported_modes: ["Hybrid", "Integrated"];
+    in-out property <int> selected_index: 0;
+    
+    in-out property <string> vendor: "Unknown";
+    
+    callback set_mode(string);
+    callback refresh();
+}

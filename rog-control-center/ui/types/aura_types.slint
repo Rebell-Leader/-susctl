@@ -8,6 +8,13 @@ export enum AuraDevType {
     AnimeOrSlash,
 }
 
+// Software animation modes for keyboards that only support Static
+export enum SoftAnimationMode {
+    None,
+    Rainbow,
+    ColorCycle,
+}
+
 export struct AuraEffect {
     /// The effect type
     mode: int,
@@ -168,4 +175,18 @@ export global AuraPageData {
         }]
     };
     callback cb_led_power(LaptopAuraPower);
+
+    // Software animation properties (for Static-only keyboards)
+    in-out property <[string]> soft_animation_modes: [
+        @tr("Animation mode" => "None"),
+        @tr("Animation mode" => "Rainbow"),
+        @tr("Animation mode" => "Color Cycle"),
+        @tr("Animation mode" => "Breathe"),
+        @tr("Animation mode" => "Pulse"),
+    ];
+    in-out property <int> soft_animation_mode: 0;
+    in-out property <float> soft_animation_speed: 200; // ms between updates
+    in-out property <bool> soft_animation_available: false; // Set true when only Static mode is supported
+    callback cb_soft_animation_mode(int);
+    callback cb_soft_animation_speed(int);
 }

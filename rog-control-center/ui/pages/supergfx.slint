@@ -1,0 +1,73 @@
+import { SystemDropdown, RogItem } from "../widgets/common.slint";
+import { VerticalBox, ScrollView, HorizontalBox } from "std-widgets.slint";
+import { RogPalette } from "../themes/rog_theme.slint";
+import { SupergfxPageData } from "../types/supergfx_types.slint";
+
+export { SupergfxPageData }
+
+export component PageSupergfx inherits Rectangle {
+    background: RogPalette.background;
+    
+    ScrollView {
+        VerticalBox {
+            padding: 20px;
+            spacing: 20px;
+            alignment: start;
+
+            // Header
+            Rectangle {
+                height: 40px;
+                background: RogPalette.control-background;
+                border-radius: RogPalette.border-radius;
+                border-width: 1px;
+                border-color: RogPalette.control-border;
+                
+                Text {
+                    text: @tr("Graphics Control (supergfx)");
+                    color: RogPalette.accent;
+                    font-size: 18px;
+                    font-weight: 700;
+                    horizontal-alignment: center;
+                    vertical-alignment: center;
+                }
+            }
+            
+            RogItem {
+                HorizontalBox {
+                    Text {
+                        text: @tr("Vendor: ") + SupergfxPageData.vendor;
+                        color: RogPalette.text-secondary;
+                        vertical-alignment: center;
+                    }
+                }
+            }
+
+            // Main Control
+            RogItem {
+                VerticalBox {
+                    Text {
+                        text: @tr("Current Mode: ") + SupergfxPageData.current_mode;
+                        color: RogPalette.text-primary;
+                    }
+                    
+                    SystemDropdown {
+                        text: @tr("Graphics Mode");
+                        model <=> SupergfxPageData.supported_modes;
+                        current_index <=> SupergfxPageData.selected_index;
+                        current_value: SupergfxPageData.supported_modes[SupergfxPageData.selected_index];
+                        selected => {
+                            SupergfxPageData.set_mode(self.current_value);
+                        }
+                    }
+                    
+                    Text {
+                        text: @tr("Note: Changing modes requires a logout.");
+                        color: RogPalette.text-secondary;
+                        font-size: 12px;
+                        wrap: word-wrap;
+                    }
+                }
+            }
+        }
+    }
+}

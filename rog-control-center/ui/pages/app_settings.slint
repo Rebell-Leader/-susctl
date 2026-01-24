@@ -1,5 +1,6 @@
-import { Palette } from "std-widgets.slint";
-import { SystemToggle } from "../widgets/common.slint";
+import { VerticalBox, ScrollView, HorizontalBox, Button } from "std-widgets.slint";
+import { SystemToggle, RogItem } from "../widgets/common.slint";
+import { RogPalette } from "../themes/rog_theme.slint";
 
 export global AppSettingsPageData {
     in-out property <bool> run_in_background;
@@ -8,52 +9,134 @@ export global AppSettingsPageData {
     callback set_startup_in_background(bool);
     in-out property <bool> enable_tray_icon;
     callback set_enable_tray_icon(bool);
-    in-out property <bool> enable_dgpu_notifications;
-    callback set_enable_dgpu_notifications(bool);
+    
+    // Master notification toggle
+    in-out property <bool> notifications_enabled;
+    callback set_notifications_enabled(bool);
+    
+    // Granular notification toggles
+    in-out property <bool> notify_gfx_switch;
+    callback set_notify_gfx_switch(bool);
+    in-out property <bool> notify_gfx_status;
+    callback set_notify_gfx_status(bool);
+    in-out property <bool> notify_platform_profile;
+    callback set_notify_platform_profile(bool);
 }
 
-export component PageAppSettings inherits VerticalLayout {
-    Rectangle {
-        clip: true;
+export component PageAppSettings inherits Rectangle {
+    background: RogPalette.background;
+    
+    ScrollView {
+        VerticalBox {
+            padding: 20px;
+            spacing: 20px;
+            alignment: start;
 
-        mainview := VerticalLayout {
-            padding: 10px;
-            spacing: 10px;
-            SystemToggle {
-                text: @tr("Run in background after closing");
-                checked <=> AppSettingsPageData.run_in_background;
-                toggled => {
-                    AppSettingsPageData.set_run_in_background(AppSettingsPageData.run_in_background)
+            // General Section
+            VerticalBox {
+                spacing: 10px;
+                padding: 0px;
+                
+                Rectangle {
+                    height: 30px;
+                    background: RogPalette.control-background;
+                    border-radius: 4px;
+                    border-width: 1px;
+                    border-color: RogPalette.control-border;
+                    
+                    Text {
+                        x: 10px;
+                        vertical-alignment: center;
+                        text: "General Settings";
+                        color: RogPalette.accent;
+                        font-weight: 700;
+                    }
+                }
+
+                SystemToggle {
+                    text: @tr("Run in background after closing");
+                    checked <=> AppSettingsPageData.run_in_background;
+                    toggled => {
+                        AppSettingsPageData.set_run_in_background(AppSettingsPageData.run_in_background)
+                    }
+                }
+    
+                SystemToggle {
+                    text: @tr("Start app in background (UI closed)");
+                    checked <=> AppSettingsPageData.startup_in_background;
+                    toggled => {
+                        AppSettingsPageData.set_startup_in_background(AppSettingsPageData.startup_in_background)
+                    }
+                }
+    
+                SystemToggle {
+                    text: @tr("Enable system tray icon");
+                    checked <=> AppSettingsPageData.enable_tray_icon;
+                    toggled => {
+                        AppSettingsPageData.set_enable_tray_icon(AppSettingsPageData.enable_tray_icon)
+                    }
                 }
             }
 
-            SystemToggle {
-                text: @tr("Start app in background (UI closed)");
-                checked <=> AppSettingsPageData.startup_in_background;
-                toggled => {
-                    AppSettingsPageData.set_startup_in_background(AppSettingsPageData.startup_in_background)
-                }
-            }
+            // Notifications Section
+            VerticalBox {
+                spacing: 10px;
+                padding: 0px;
 
-            SystemToggle {
-                text: @tr("Enable system tray icon");
-                checked <=> AppSettingsPageData.enable_tray_icon;
-                toggled => {
-                    AppSettingsPageData.set_enable_tray_icon(AppSettingsPageData.enable_tray_icon)
-                }
-            }
+                Rectangle {
+                    height: 30px;
+                    background: RogPalette.control-background;
+                    border-radius: 4px;
+                    border-width: 1px;
+                    border-color: RogPalette.control-border;
 
-            SystemToggle {
-                text: @tr("Enable dGPU notifications");
-                checked <=> AppSettingsPageData.enable_dgpu_notifications;
-                toggled => {
-                    AppSettingsPageData.set_enable_dgpu_notifications(AppSettingsPageData.enable_dgpu_notifications)
+                    Text {
+                        x: 10px;
+                        vertical-alignment: center;
+                        text: "Notifications";
+                        color: RogPalette.accent;
+                        font-weight: 700;
+                    }
                 }
-            }
-
-            Text {
-                color: Palette.accent-background;
-                text: " WIP: some features like notifications are not complete";
+                
+                SystemToggle {
+                    text: @tr("Enable Notifications");
+                    checked <=> AppSettingsPageData.notifications_enabled;
+                    toggled => {
+                        AppSettingsPageData.set_notifications_enabled(AppSettingsPageData.notifications_enabled)
+                    }
+                }
+                
+                // Sub-toggles container
+                VerticalBox {
+                    padding-left: 30px; // Indent
+                    spacing: 10px;
+                    visible: AppSettingsPageData.notifications_enabled;
+                    
+                    SystemToggle {
+                        text: @tr("Notify on Graphics Switch");
+                        checked <=> AppSettingsPageData.notify_gfx_switch;
+                        toggled => {
+                            AppSettingsPageData.set_notify_gfx_switch(AppSettingsPageData.notify_gfx_switch)
+                        }
+                    }
+                    
+                    SystemToggle {
+                        text: @tr("Notify on GPU Status Change");
+                        checked <=> AppSettingsPageData.notify_gfx_status;
+                        toggled => {
+                            AppSettingsPageData.set_notify_gfx_status(AppSettingsPageData.notify_gfx_status)
+                        }
+                    }
+                    
+                    SystemToggle {
+                        text: @tr("Notify on Power Profile Change");
+                        checked <=> AppSettingsPageData.notify_platform_profile;
+                        toggled => {
+                            AppSettingsPageData.set_notify_platform_profile(AppSettingsPageData.notify_platform_profile)
+                        }
+                    }
+                }
             }
         }
     }

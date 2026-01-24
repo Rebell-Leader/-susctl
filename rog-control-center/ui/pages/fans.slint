@@ -1,7 +1,10 @@
-import { Palette, TabWidget, Button, CheckBox } from "std-widgets.slint";
+import { Palette, TabWidget, Button, CheckBox, Slider } from "std-widgets.slint";
 import { Graph, Node } from "../widgets/graph.slint";
 import { SystemToggle } from "../widgets/common.slint";
 import { Profile, FanType, FanPageData } from "../types/fan_types.slint";
+import { RogPalette } from "../themes/rog_theme.slint";
+
+
 
 component FanTab inherits Rectangle {
     in-out property <bool> enabled: false;
@@ -16,40 +19,104 @@ component FanTab inherits Rectangle {
     in-out property <[Node]> nodes;
 
     VerticalLayout {
-        padding: 5px;
+        private property <bool> local_busy: 
+            (root.fan_type == FanType.CPU && FanPageData.is_busy_cpu) ||
+            (root.fan_type == FanType.GPU && FanPageData.is_busy_gpu) ||
+            (root.fan_type == FanType.Middle && FanPageData.is_busy_mid);
+        
+        if FanPageData.show_custom_warning: Rectangle {
+            background: RogPalette.control-background;
+            border-radius: 4px;
+            height: 48px;
+            HorizontalLayout {
+                padding: 10px;
+                Text {
+                    color: #ffd700; // Gold/Yellow
+                    text: @tr("Zero RPM Mode Enabled: Fans will take ~25s to spin down entirely.");
+                    vertical-alignment: TextVerticalAlignment.center;
+                    horizontal-alignment: TextHorizontalAlignment.center;
+                    wrap: word-wrap;
+                }
+            }
+        }
+
         HorizontalLayout {
+            spacing: 10px;
             if root.tab_enabled: Graph {
                 nodes <=> root.nodes;
             }
+            if root.tab_enabled: VerticalLayout {
+                width: 40px;
+                alignment: center;
+                spacing: 10px;
+                
+                Button {
+                    text: "+";
+                    height: 40px;
+                    width: 40px;
+                    clicked => {
+                        root.nodes = [
+                            { x: root.nodes[0].x, y: min(255px, root.nodes[0].y + 13px) },
+                            { x: root.nodes[1].x, y: min(255px, root.nodes[1].y + 13px) },
+                            { x: root.nodes[2].x, y: min(255px, root.nodes[2].y + 13px) },
+                            { x: root.nodes[3].x, y: min(255px, root.nodes[3].y + 13px) },
+                            { x: root.nodes[4].x, y: min(255px, root.nodes[4].y + 13px) },
+                            { x: root.nodes[5].x, y: min(255px, root.nodes[5].y + 13px) },
+                            { x: root.nodes[6].x, y: min(255px, root.nodes[6].y + 13px) },
+                            { x: root.nodes[7].x, y: min(255px, root.nodes[7].y + 13px) }
+                        ];
+                    }
+                }
+                
+                Text { 
+                    text: "All"; 
+                    font-size: 10px; 
+                    horizontal-alignment: center; 
+                    color: white;
+                }
+
+                Button {
+                    text: "-";
+                    height: 40px;
+                    width: 40px;
+                    clicked => {
+                        root.nodes = [
+                            { x: root.nodes[0].x, y: max(0px, root.nodes[0].y - 13px) },
+                            { x: root.nodes[1].x, y: max(0px, root.nodes[1].y - 13px) },
+                            { x: root.nodes[2].x, y: max(0px, root.nodes[2].y - 13px) },
+                            { x: root.nodes[3].x, y: max(0px, root.nodes[3].y - 13px) },
+                            { x: root.nodes[4].x, y: max(0px, root.nodes[4].y - 13px) },
+                            { x: root.nodes[5].x, y: max(0px, root.nodes[5].y - 13px) },
+                            { x: root.nodes[6].x, y: max(0px, root.nodes[6].y - 13px) },
+                            { x: root.nodes[7].x, y: max(0px, root.nodes[7].y - 13px) }
+                        ];
+                    }
+                }
+            }
+
             if !root.tab_enabled: Rectangle {
                 Text {
-                    font-size: 16px;
+                    font-size: 24px;
                     text: @tr("This fan is not avilable on this machine");
                 }
             }
         }
 
-        Rectangle {
-            background: Palette.border;
-            height: 1px;
-        }
-
         HorizontalLayout {
+            spacing: 20px;
             alignment: LayoutAlignment.end;
-            spacing: 10px;
-            padding: 10px;
             CheckBox {
-                text: @tr("Enabled");
+                text: @tr("Enable Manual Control");
                 checked <=> root.enabled;
-                enabled <=> root.tab_enabled;
+                enabled: root.tab_enabled && !local_busy;
                 toggled => {
                     root.toggled();
                 }
             }
 
             Button {
-                text: @tr("Apply");
-                enabled <=> root.tab_enabled;
+                text: local_busy ? @tr("Applying...") : @tr("Apply Curve");
+                enabled: root.tab_enabled && root.enabled && !local_busy;
                 clicked => {
                     root.apply();
                 }
@@ -57,7 +124,7 @@ component FanTab inherits Rectangle {
 
             Button {
                 text: @tr("Cancel");
-                enabled <=> root.tab_enabled;
+                enabled: root.tab_enabled && !local_busy;
                 clicked => {
                     root.cancel()
                 }
@@ -65,7 +132,7 @@ component FanTab inherits Rectangle {
 
             Button {
                 text: @tr("Factory Default (all fans)");
-                enabled <=> root.tab_enabled;
+                enabled: root.tab_enabled && !local_busy;
                 clicked => {
                     root.default();
                 }
@@ -94,6 +161,9 @@ export component PageFans inherits VerticalLayout {
                         default => {
                             FanPageData.set_profile_default(Profile.Balanced);
                         }
+                        cancel => {
+                            FanPageData.cancel(FanType.CPU, Profile.Balanced);
+                        }
                     }
                 }
 
@@ -112,6 +182,9 @@ export component PageFans inherits VerticalLayout {
                         default => {
                             FanPageData.set_profile_default(Profile.Balanced);
                         }
+                        cancel => {
+                            FanPageData.cancel(FanType.Middle, Profile.Balanced);
+                        }
                     }
                 }
 
@@ -129,6 +202,9 @@ export component PageFans inherits VerticalLayout {
                         }
                         default => {
                             FanPageData.set_profile_default(Profile.Balanced);
+                        }
+                        cancel => {
+                            FanPageData.cancel(FanType.GPU, Profile.Balanced);
                         }
                     }
                 }
@@ -153,6 +229,9 @@ export component PageFans inherits VerticalLayout {
                         default => {
                             FanPageData.set_profile_default(Profile.Performance);
                         }
+                        cancel => {
+                            FanPageData.cancel(FanType.CPU, Profile.Performance);
+                        }
                     }
                 }
 
@@ -171,6 +250,9 @@ export component PageFans inherits VerticalLayout {
                         default => {
                             FanPageData.set_profile_default(Profile.Performance);
                         }
+                        cancel => {
+                            FanPageData.cancel(FanType.Middle, Profile.Performance);
+                        }
                     }
                 }
 
@@ -188,6 +270,9 @@ export component PageFans inherits VerticalLayout {
                         }
                         default => {
                             FanPageData.set_profile_default(Profile.Performance);
+                        }
+                        cancel => {
+                            FanPageData.cancel(FanType.GPU, Profile.Performance);
                         }
                     }
                 }
@@ -212,6 +297,9 @@ export component PageFans inherits VerticalLayout {
                         default => {
                             FanPageData.set_profile_default(Profile.Quiet);
                         }
+                        cancel => {
+                            FanPageData.cancel(FanType.CPU, Profile.Quiet);
+                        }
                     }
                 }
 
@@ -230,6 +318,9 @@ export component PageFans inherits VerticalLayout {
                         default => {
                             FanPageData.set_profile_default(Profile.Quiet);
                         }
+                        cancel => {
+                            FanPageData.cancel(FanType.Middle, Profile.Quiet);
+                        }
                     }
                 }
 
@@ -247,6 +338,9 @@ export component PageFans inherits VerticalLayout {
                         }
                         default => {
                             FanPageData.set_profile_default(Profile.Quiet);
+                        }
+                        cancel => {
+                            FanPageData.cancel(FanType.GPU, Profile.Quiet);
                         }
                     }
                 }

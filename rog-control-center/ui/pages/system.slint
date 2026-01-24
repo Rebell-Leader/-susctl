@@ -1,5 +1,6 @@
 import { SystemSlider, SystemDropdown, SystemToggle, SystemToggleInt, RogItem } from "../widgets/common.slint";
 import { Palette, HorizontalBox , VerticalBox, ScrollView, Slider, Button, Switch, ComboBox, GroupBox, StandardButton} from "std-widgets.slint";
+import { RogPalette } from "../themes/rog_theme.slint";
 
 export struct AttrMinMax {
   min: int,
@@ -66,13 +67,6 @@ export global SystemPageData {
     in-out property <int> mini_led_mode;
     callback cb_mini_led_mode(int);
 
-    in-out property <float> screenpad_gamma;
-    callback cb_screenpad_gamma(float);
-    // percentage
-    in-out property <int> screenpad_brightness: 50;
-    callback cb_screenpad_brightness(int);
-    in-out property <bool> screenpad_sync_with_primary: false;
-    callback cb_screenpad_sync_with_primary(bool);
 
     in-out property <bool> asus_armoury_loaded: false;
 
@@ -152,22 +146,27 @@ export component PageSystem inherits Rectangle {
     property <bool> show_fade_cover: false;
     property <bool> show_throttle_advanced: false;
     clip: true;
-
+    //padding only has effect on layout elements
+    //padding: 8px;
     ScrollView {
         VerticalLayout {
-            padding: 12px;
-            spacing: 8px;
+            padding: 10px;
+            padding-top: 40px;
+            padding-bottom: 40px;
+            spacing: 10px;
             alignment: LayoutAlignment.start;
             Rectangle {
-                background: Palette.alternate-background;
-                border-color: Palette.border;
+                background: RogPalette.control-background;
+                border-color: RogPalette.control-border;
                 border-width: 1px;
-                border-radius: 2px;
-                height: 36px;
+                border-radius: 8px;
+                height: 46px;
                 Text {
-                    font-size: 16px;
-                    color: Palette.control-foreground;
+                    font-size: 18px;
+                    color: RogPalette.accent;
                     horizontal-alignment: TextHorizontalAlignment.center;
+                    vertical-alignment: TextVerticalAlignment.center;
+                    font-weight: 700;
                     text: @tr("Power settings");
                 }
             }
@@ -206,143 +205,75 @@ export component PageSystem inherits Rectangle {
                 }
             }
 
-            if SystemPageData.screenpad_brightness != -1: RogItem {
-                HorizontalLayout {
-                    padding-left: 10px;
-                    padding-right: 20px;
-                    HorizontalLayout {
-                        width: 40%;
-                        alignment: LayoutAlignment.space-between;
-                        padding-right: 15px;
-                        Text {
-                            font-size: 14px;
-                            vertical-alignment: TextVerticalAlignment.center;
-                            color: Palette.control-foreground;
-                            text: @tr("Screenpad brightness");
-                        }
-                    }
-
-                    HorizontalLayout {
-                        width: 38%;
-                        alignment: LayoutAlignment.stretch;
-                        screen_bright := Slider {
-                            enabled: true;
-                            minimum: 0;
-                            maximum: 100;
-                            value: SystemPageData.screenpad_brightness;
-                            released(value) => {
-                                // SystemPageData.screenpad_brightness = self.value;
-                                SystemPageData.cb_screenpad_brightness(Math.floor(self.value));
-                            }
-                        }
-                    }
-
-                    HorizontalLayout {
-                    width: 20%;
-                    padding-left: 14px;
-                        alignment: LayoutAlignment.stretch;
-                        Switch {
-                            text: @tr("Sync with primary");
-                            checked <=> SystemPageData.screenpad_sync_with_primary;
-                            toggled => {
-                                SystemPageData.cb_screenpad_sync_with_primary(self.checked);
-                            }
-                        }
-                    }
-                }
-            }
-
-            if SystemPageData.kbd_leds_awake != -1 ||
-                    SystemPageData.kbd_leds_sleep != -1 ||
-                    SystemPageData.kbd_leds_boot != -1 ||
-                    SystemPageData.kbd_leds_shutdown != -1: VerticalLayout {
-                padding: 0px;
-                spacing: 0px;
-                alignment: LayoutAlignment.start;
-                Rectangle {
-                    background: Palette.alternate-background;
-                    border-color: Palette.border;
-                    border-width: 1px;
-                    border-radius: 2px;
-                    height: 40px;
-                    Text {
-                        font-size: 16px;
-                        color: Palette.control-foreground;
-                        horizontal-alignment: TextHorizontalAlignment.center;
-                        text: @tr("Keyboard Power Management");
-                    }
-                }
-
-                GroupBox {
-
-                    HorizontalLayout {
-                        spacing: 10px;
-                        if SystemPageData.kbd_leds_awake != -1: SystemToggleInt {
-                            text: @tr("Keyboard Awake Effect");
-                            checked_int <=> SystemPageData.kbd_leds_awake;
-                            toggled => {
-                                SystemPageData.cb_kbd_leds_awake(SystemPageData.kbd_leds_awake)
-                            }
-                        }
-
-                        if SystemPageData.kbd_leds_sleep != -1: SystemToggleInt {
-                            text: @tr("Keyboard Sleep Effect");
-                            checked_int <=> SystemPageData.kbd_leds_sleep;
-                            toggled => {
-                                SystemPageData.cb_kbd_leds_sleep(SystemPageData.kbd_leds_sleep)
-                            }
-                        }
-
-                        if SystemPageData.kbd_leds_boot != -1: SystemToggleInt {
-                            text: @tr("Keyboard Boot Effect");
-                            checked_int <=> SystemPageData.kbd_leds_boot;
-                            toggled => {
-                                SystemPageData.cb_kbd_leds_boot(SystemPageData.kbd_leds_boot)
-                            }
-                        }
-
-                        if SystemPageData.kbd_leds_shutdown != -1: SystemToggleInt {
-                            text: @tr("Keyboard Shutdown Effect");
-                            checked_int <=> SystemPageData.kbd_leds_shutdown;
-                            toggled => {
-                                SystemPageData.cb_kbd_leds_shutdown(SystemPageData.kbd_leds_shutdown)
-                            }
-                        }
-                    }
-                }
-            }
-
             Rectangle {
-                background: Palette.alternate-background;
-                border-color: Palette.border;
+                background: RogPalette.control-background;
+                border-color: RogPalette.control-border;
                 border-width: 1px;
-                border-radius: 2px;
-                height: 36px;
+                border-radius: 8px;
+                height: 46px;
                 Text {
-                    font-size: 16px;
-                    color: Palette.control-foreground;
+                    font-size: 18px;
+                    color: RogPalette.accent;
                     horizontal-alignment: TextHorizontalAlignment.center;
+                    vertical-alignment: TextVerticalAlignment.center;
+                    font-weight: 700;
                     text: @tr("Armoury settings");
                 }
             }
 
             if !SystemPageData.asus_armoury_loaded: Rectangle {
-                background: maroon;
-                // background: darkred;
+                border-width: 3px;
+                border-color: red;
                 max-height: 30px;
                 VerticalBox {
                     Text {
                         text: @tr("no_asus_armoury_driver_1" => "The asus-armoury driver is not loaded");
                         font-size: 16px;
-                        color: white;
                         horizontal-alignment: TextHorizontalAlignment.center;
                     }
 
                     Text {
                         text: @tr("no_asus_armoury_driver_2" => "For advanced features you will require a kernel with this driver added.");
                         font-size: 16px;
-                        color: white;
                         horizontal-alignment: TextHorizontalAlignment.center;
+                    }
+                }
+            }
+
+            GroupBox {
+                title: @tr("Keyboard Power Management");
+                HorizontalLayout {
+                    spacing: 10px;
+                    if SystemPageData.kbd_leds_awake != -1: SystemToggleInt {
+                        text: @tr("Keyboard Awake Effect");
+                        checked_int <=> SystemPageData.kbd_leds_awake;
+                        toggled => {
+                            SystemPageData.cb_kbd_leds_awake(SystemPageData.kbd_leds_awake)
+                        }
+                    }
+
+                    if SystemPageData.kbd_leds_sleep != -1: SystemToggleInt {
+                        text: @tr("Keyboard Sleep Effect");
+                        checked_int <=> SystemPageData.kbd_leds_sleep;
+                        toggled => {
+                            SystemPageData.cb_kbd_leds_sleep(SystemPageData.kbd_leds_sleep)
+                        }
+                    }
+
+                    if SystemPageData.kbd_leds_boot != -1: SystemToggleInt {
+                        text: @tr("Keyboard Boot Effect");
+                        checked_int <=> SystemPageData.kbd_leds_boot;
+                        toggled => {
+                            SystemPageData.cb_kbd_leds_boot(SystemPageData.kbd_leds_boot)
+                        }
+                    }
+
+                    if SystemPageData.kbd_leds_shutdown != -1: SystemToggleInt {
+                        text: @tr("Keyboard Shutdown Effect");
+                        checked_int <=> SystemPageData.kbd_leds_shutdown;
+                        toggled => {
+                            SystemPageData.cb_kbd_leds_shutdown(SystemPageData.kbd_leds_shutdown)
+                        }
                     }
                 }
             }
@@ -400,6 +331,7 @@ export component PageSystem inherits Rectangle {
                     Text {
                         font-size: 16px;
                         text: @tr("ppt_warning" => "The following settings are not applied until the toggle is enabled.");
+                        color: RogPalette.text-primary;
                     }
                 }
 
@@ -568,7 +500,7 @@ export component PageSystem inherits Rectangle {
     if root.show_fade_cover: Rectangle {
         width: 100%;
         height: 100%;
-        background: Palette.background;
+        background: RogPalette.background;
         opacity: 0.9;
         TouchArea {
             height: 100%;
@@ -584,25 +516,24 @@ export component PageSystem inherits Rectangle {
     }
 
     if root.show_throttle_advanced: Rectangle {
-        background: Palette.background;
         width: 100%;
         height: 100%;
         opacity: 1;
         ScrollView {
             VerticalLayout {
-                alignment: start;
-                padding: 5px;
-                padding-top: 15px;
+                padding: 50px;
+                padding-top: 5px;
+                padding-bottom: 100px;
                 spacing: 10px;
                 GroupBox {
                     VerticalBox {
-                        alignment: start;
                         spacing: 10px;
                         Text {
-                            font-size: 16px;
+                            font-size: 18px;
                             horizontal-alignment: TextHorizontalAlignment.center;
                             vertical-alignment: TextVerticalAlignment.center;
                             text: @tr("Energy Performance Preference linked to Throttle Policy");
+                            color: RogPalette.text-primary;
                         }
 
                         SystemToggle {
@@ -647,13 +578,13 @@ export component PageSystem inherits Rectangle {
 
                 GroupBox {
                     VerticalBox {
-                        alignment: start;
                         spacing: 10px;
                         Text {
-                            font-size: 16px;
+                            font-size: 18px;
                             horizontal-alignment: TextHorizontalAlignment.center;
                             vertical-alignment: TextVerticalAlignment.center;
                             text: @tr("Throttle Policy for power state");
+                            color: RogPalette.text-primary;
                         }
 
                         HorizontalLayout {
@@ -705,8 +636,8 @@ export component PageSystem inherits Rectangle {
         Button {
             x: root.width - self.width - 6px;
             y: 6px;
-            text: "✕";
-            height: 34px;
+            text: "X";
+            height: 40px;
             clicked => {
                 root.show_throttle_advanced = false;
                 root.show_fade_cover = false;

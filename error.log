@@ -1,0 +1,66 @@
+warning: rog-control-center@6.3.0: warning: padding-bottom only has effect on layout elements
+warning: rog-control-center@6.3.0:    --> /mnt/Data/mihais/builds/ROGCC/rog-control-center/ui/widgets/sidebar.slint:122:29
+warning: rog-control-center@6.3.0:     |
+warning: rog-control-center@6.3.0: 122 |             padding-bottom: 20px;
+warning: rog-control-center@6.3.0:     |                             ^^^^^
+    Checking rog-control-center v6.3.0 (/mnt/Data/mihais/builds/ROGCC/rog-control-center)
+warning: unused import: `Weak`
+ --> rog-control-center/src/ui/setup_screenpad.rs:3:30
+  |
+3 | use slint::{ComponentHandle, Weak};
+  |                              ^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: unused import: `set_ui_callbacks`
+ --> rog-control-center/src/ui/setup_screenpad.rs:8:13
+  |
+8 | use crate::{set_ui_callbacks, MainWindow, ScreenpadPageData};
+  |             ^^^^^^^^^^^^^^^^
+
+warning: unused import: `ScreenpadPageData`
+  --> rog-control-center/src/ui/mod.rs:27:46
+   |
+27 | use crate::{AppSettingsPageData, MainWindow, ScreenpadPageData};
+   |                                              ^^^^^^^^^^^^^^^^^
+
+error[E0308]: mismatched types
+  --> rog-control-center/src/ui/setup_screenpad.rs:81:57
+   |
+81 | ...                   bl.set_screenpad_brightness(val as u32).await,
+   |                          ------------------------ ^^^^^^^^^^ expected `i32`, found `u32`
+   |                          |
+   |                          arguments to this method are incorrect
+   |
+note: method defined here
+  --> /mnt/Data/mihais/builds/ROGCC/rog-dbus/src/zbus_backlight.rs:40:8
+   |
+40 |     fn set_screenpad_brightness(&self, value: i32) -> zbus::Result<()>;
+   |        ^^^^^^^^^^^^^^^^^^^^^^^^
+help: you can convert a `u32` to an `i32` and panic if the converted value doesn't fit
+   |
+81 |                             bl.set_screenpad_brightness((val as u32).try_into().unwrap()).await,
+   |                                                         +          +++++++++++++++++++++
+
+warning: unused variable: `ui_weak_copy`
+  --> rog-control-center/src/ui/setup_slash.rs:32:17
+   |
+32 |             let ui_weak_copy = ui_weak.clone();
+   |                 ^^^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_ui_weak_copy`
+   |
+   = note: `#[warn(unused_variables)]` (part of `#[warn(unused)]`) on by default
+
+warning: unused variable: `backlight`
+   --> rog-control-center/src/ui/setup_system.rs:298:13
+    |
+298 |         let backlight = BacklightProxy::builder(&conn)
+    |             ^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_backlight`
+
+For more information about this error, try `rustc --explain E0308`.
+warning: `rog-control-center` (lib) generated 5 warnings
+warning: rog-control-center@6.3.0: warning: padding-bottom only has effect on layout elements
+warning: rog-control-center@6.3.0:    --> /mnt/Data/mihais/builds/ROGCC/rog-control-center/ui/widgets/sidebar.slint:122:29
+warning: rog-control-center@6.3.0:     |
+warning: rog-control-center@6.3.0: 122 |             padding-bottom: 20px;
+warning: rog-control-center@6.3.0:     |                             ^^^^^
+error: could not compile `rog-control-center` (lib) due to 1 previous error; 5 warnings emitted

@@ -1,0 +1,252 @@
+warning: rog-control-center@6.3.0: warning: padding-bottom only has effect on layout elements
+warning: rog-control-center@6.3.0:    --> /mnt/Data/mihais/builds/ROGCC/rog-control-center/ui/widgets/sidebar.slint:122:29
+warning: rog-control-center@6.3.0:     |
+warning: rog-control-center@6.3.0: 122 |             padding-bottom: 20px;
+warning: rog-control-center@6.3.0:     |                             ^^^^^
+   Compiling rog-control-center v6.3.0 (/mnt/Data/mihais/builds/ROGCC/rog-control-center)
+error[E0308]: mismatched types
+  --> rog-control-center/src/ui/mod.rs:46:36
+   |
+41 |                   concat_idents::concat_idents!(set = set_, $proxy_fn {
+   |                                                       ---- arguments to this method are incorrect
+...
+46 |                       proxy_copy.set(value $($conv2)*).await,
+   |                                      ^^^^^ expected `u8`, found `f32`
+   |
+  ::: rog-control-center/src/ui/setup_slash.rs:51:17
+   |
+51 | /                 set_ui_callbacks!(
+52 | |                     ui_handle,
+53 | |                     SlashPageData(),
+54 | |                     proxy.brightness(),
+55 | |                     "Slash brightness set to {}",
+56 | |                     "Failed to set slash brightness"
+57 | |                 );
+   | |_________________- in this macro invocation
+   |
+note: method defined here
+  --> /mnt/Data/mihais/builds/ROGCC/rog-dbus/src/zbus_slash.rs:20:8
+   |
+20 |     fn set_brightness(&self, value: u8) -> zbus::Result<()>;
+   |        ^^^^^^^^^^^^^^
+   = note: this error originates in the macro `set_ui_callbacks` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0308]: mismatched types
+    --> rog-control-center/src/ui/mod.rs:63:54
+     |
+  58 |               concat_idents::concat_idents!(set = set_, $proxy_fn {
+     |                                                   ---- arguments to this method are incorrect
+...
+  63 |                           handle.global::<$data>().set(out $($conv1)*);
+     |                                                        ^^^ expected `f32`, found `u8`
+     |
+    ::: rog-control-center/src/ui/setup_slash.rs:51:17
+     |
+  51 | /                 set_ui_callbacks!(
+  52 | |                     ui_handle,
+  53 | |                     SlashPageData(),
+  54 | |                     proxy.brightness(),
+  55 | |                     "Slash brightness set to {}",
+  56 | |                     "Failed to set slash brightness"
+  57 | |                 );
+     | |_________________- in this macro invocation
+     |
+note: method defined here
+    --> /mnt/Data/mihais/builds/ROGCC/target/debug/build/rog-control-center-f28a2c919698f43f/out/main_window.rs:1854:39
+     |
+1854 |          # [allow (dead_code)] pub fn set_brightness (& self , value : f32) {
+     |                                       ^^^^^^^^^^^^^^           -----------
+     = note: this error originates in the macro `set_ui_callbacks` (in Nightly builds, run with -Z macro-backtrace for more info)
+help: you can convert a `u8` to an `f32`, producing the floating point representation of the integer
+     |
+  63 |                         handle.global::<$data>().set(out.into() $($conv1)*);
+     |                                                         +++++++
+
+error[E0308]: mismatched types
+  --> rog-control-center/src/ui/mod.rs:46:36
+   |
+41 |                   concat_idents::concat_idents!(set = set_, $proxy_fn {
+   |                                                       ---- arguments to this method are incorrect
+...
+46 |                       proxy_copy.set(value $($conv2)*).await,
+   |                                      ^^^^^ expected `u8`, found `f32`
+   |
+  ::: rog-control-center/src/ui/setup_slash.rs:58:17
+   |
+58 | /                 set_ui_callbacks!(
+59 | |                     ui_handle,
+60 | |                     SlashPageData(),
+61 | |                     proxy.interval(),
+62 | |                     "Slash interval set to {}",
+63 | |                     "Failed to set slash interval"
+64 | |                 );
+   | |_________________- in this macro invocation
+   |
+note: method defined here
+  --> /mnt/Data/mihais/builds/ROGCC/rog-dbus/src/zbus_slash.rs:26:8
+   |
+26 |     fn set_interval(&self, value: u8) -> zbus::Result<()>;
+   |        ^^^^^^^^^^^^
+   = note: this error originates in the macro `set_ui_callbacks` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0308]: mismatched types
+    --> rog-control-center/src/ui/mod.rs:63:54
+     |
+  58 |               concat_idents::concat_idents!(set = set_, $proxy_fn {
+     |                                                   ---- arguments to this method are incorrect
+...
+  63 |                           handle.global::<$data>().set(out $($conv1)*);
+     |                                                        ^^^ expected `f32`, found `u8`
+     |
+    ::: rog-control-center/src/ui/setup_slash.rs:58:17
+     |
+  58 | /                 set_ui_callbacks!(
+  59 | |                     ui_handle,
+  60 | |                     SlashPageData(),
+  61 | |                     proxy.interval(),
+  62 | |                     "Slash interval set to {}",
+  63 | |                     "Failed to set slash interval"
+  64 | |                 );
+     | |_________________- in this macro invocation
+     |
+note: method defined here
+    --> /mnt/Data/mihais/builds/ROGCC/target/debug/build/rog-control-center-f28a2c919698f43f/out/main_window.rs:1974:39
+     |
+1974 |          # [allow (dead_code)] pub fn set_interval (& self , value : f32) {
+     |                                       ^^^^^^^^^^^^           -----------
+     = note: this error originates in the macro `set_ui_callbacks` (in Nightly builds, run with -Z macro-backtrace for more info)
+help: you can convert a `u8` to an `f32`, producing the floating point representation of the integer
+     |
+  63 |                         handle.global::<$data>().set(out.into() $($conv1)*);
+     |                                                         +++++++
+
+error[E0599]: no method named `on_set_mode_index` found for struct `SlashPageData<'a>` in the current scope
+    --> rog-control-center/src/ui/setup_slash.rs:119:22
+     |
+ 119 |                 data.on_set_mode_index(move |idx| {
+     |                 -----^^^^^^^^^^^^^^^^^
+     |
+    ::: /mnt/Data/mihais/builds/ROGCC/target/debug/build/rog-control-center-f28a2c919698f43f/out/main_window.rs:1847:25
+     |
+1847 |      # [allow (unused)] pub struct r#SlashPageData < 'a > (& 'a :: core :: pin :: Pin < sp :: Rc < InnerSlashPageData >>) ;
+     |                         --------------------------------- method `on_set_mode_index` not found for this struct
+     |
+help: there is a method `set_mode_index` with a similar name
+     |
+ 119 -                 data.on_set_mode_index(move |idx| {
+ 119 +                 data.set_mode_index(move |idx| {
+     |
+
+error[E0599]: no method named `row_count` found for struct `ModelRc<T>` in the current scope
+   --> rog-control-center/src/ui/setup_slash.rs:127:60
+    |
+127 |                         if idx >= 0 && idx < d.get_modes().row_count() {
+    |                                                            ^^^^^^^^^ method not found in `ModelRc<slint::SharedString>`
+    |
+   ::: /home/mihais/.cargo/git/checkouts/slint-774a37e469fae6bf/f181d5e/internal/core/model.rs:125:8
+    |
+125 |     fn row_count(&self) -> usize;
+    |        --------- the method is available for `ModelRc<slint::SharedString>` here
+    |
+    = help: items from traits can only be used if the trait is in scope
+help: trait `Model` which provides `row_count` is implemented but not in scope; perhaps you want to import it
+    |
+  1 + use slint::Model;
+    |
+
+error[E0599]: no method named `row_data` found for struct `ModelRc<T>` in the current scope
+   --> rog-control-center/src/ui/setup_slash.rs:128:48
+    |
+128 | ...                   Some(d.get_modes().row_data(idx as usize).unwrap_or_default())
+    |                                          ^^^^^^^^
+    |
+   ::: /home/mihais/.cargo/git/checkouts/slint-774a37e469fae6bf/f181d5e/internal/core/model.rs:132:8
+    |
+132 |     fn row_data(&self, row: usize) -> Option<Self::Data>;
+    |        -------- the method is available for `ModelRc<slint::SharedString>` here
+    |
+    = help: items from traits can only be used if the trait is in scope
+help: there is a method `set_row_data` with a similar name, but with different arguments
+   --> /home/mihais/.cargo/git/checkouts/slint-774a37e469fae6bf/f181d5e/internal/core/model.rs:142:5
+    |
+142 |     fn set_row_data(&self, _row: usize, _data: Self::Data) {
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+help: trait `Model` which provides `row_data` is implemented but not in scope; perhaps you want to import it
+    |
+  1 + use slint::Model;
+    |
+
+error[E0277]: the size for values of type `str` cannot be known at compilation time
+   --> rog-control-center/src/ui/setup_slash.rs:136:28
+    |
+136 |                     if let Some(mode_str) = mode_str_opt {
+    |                            ^^^^^^^^^^^^^^ doesn't have a size known at compile-time
+    |
+    = help: the trait `Sized` is not implemented for `str`
+note: required by a bound in `std::prelude::v1::Some`
+   --> /home/mihais/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/core/src/option.rs:599:17
+    |
+599 | pub enum Option<T> {
+    |                 ^ required by this bound in `std::prelude::v1::Some`
+...
+607 |     Some(#[stable(feature = "rust1", since = "1.0.0")] T),
+    |     ---- required by a bound in this tuple variant
+
+error[E0599]: no method named `iter` found for struct `ModelRc<T>` in the current scope
+   --> rog-control-center/src/ui/setup_slash.rs:166:49
+    |
+166 | ...                   for (i, m) in model.iter().enumerate() {
+    |                                           ^^^^
+    |
+   ::: /home/mihais/.cargo/git/checkouts/slint-774a37e469fae6bf/f181d5e/internal/core/model.rs:157:8
+    |
+157 |     fn iter(&self) -> ModelIterator<'_, Self::Data>
+    |        ---- the method is available for `ModelRc<slint::SharedString>` here
+    |
+    = help: items from traits can only be used if the trait is in scope
+help: there is a method `filter` with a similar name, but with different arguments
+   --> /home/mihais/.cargo/git/checkouts/slint-774a37e469fae6bf/f181d5e/internal/core/model.rs:260:5
+    |
+260 | /     fn filter<F>(self, filter_function: F) -> FilterModel<Self, F>
+261 | |     where
+262 | |         Self: Sized + 'static,
+263 | |         F: Fn(&Self::Data) -> bool + 'static,
+    | |_____________________________________________^
+help: trait `Model` which provides `iter` is implemented but not in scope; perhaps you want to import it
+    |
+  1 + use slint::Model;
+    |
+
+error[E0599]: no method named `iter` found for struct `ModelRc<T>` in the current scope
+   --> rog-control-center/src/ui/setup_slash.rs:185:41
+    |
+185 |                     for (i, m) in model.iter().enumerate() {
+    |                                         ^^^^
+    |
+   ::: /home/mihais/.cargo/git/checkouts/slint-774a37e469fae6bf/f181d5e/internal/core/model.rs:157:8
+    |
+157 |     fn iter(&self) -> ModelIterator<'_, Self::Data>
+    |        ---- the method is available for `ModelRc<slint::SharedString>` here
+    |
+    = help: items from traits can only be used if the trait is in scope
+help: there is a method `filter` with a similar name, but with different arguments
+   --> /home/mihais/.cargo/git/checkouts/slint-774a37e469fae6bf/f181d5e/internal/core/model.rs:260:5
+    |
+260 | /     fn filter<F>(self, filter_function: F) -> FilterModel<Self, F>
+261 | |     where
+262 | |         Self: Sized + 'static,
+263 | |         F: Fn(&Self::Data) -> bool + 'static,
+    | |_____________________________________________^
+help: trait `Model` which provides `iter` is implemented but not in scope; perhaps you want to import it
+    |
+  1 + use slint::Model;
+    |
+
+Some errors have detailed explanations: E0277, E0308, E0599.
+For more information about an error, try `rustc --explain E0277`.
+warning: rog-control-center@6.3.0: warning: padding-bottom only has effect on layout elements
+warning: rog-control-center@6.3.0:    --> /mnt/Data/mihais/builds/ROGCC/rog-control-center/ui/widgets/sidebar.slint:122:29
+warning: rog-control-center@6.3.0:     |
+warning: rog-control-center@6.3.0: 122 |             padding-bottom: 20px;
+warning: rog-control-center@6.3.0:     |                             ^^^^^
+error: could not compile `rog-control-center` (lib) due to 10 previous errors
