@@ -37,7 +37,7 @@ gumdrop.workspace = true
 log.workspace = true
 env_logger.workspace = true
 
-tokio.workspace = true
+tokio = { workspace = true, features = ["fs"] }
 serde.workspace = true
 zbus.workspace = true
 ron.workspace = true
