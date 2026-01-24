@@ -216,10 +216,8 @@ pub fn setup_aura_page(ui: &MainWindow, _states: Arc<Mutex<Config>>) {
                                         if let Err(e) = aura_inner.stop_animation().await {
                                             error!("Failed to stop animation: {e}");
                                         }
-                                    } else {
-                                        if let Err(e) = aura_inner.start_animation(json).await {
-                                            error!("Failed to start animation: {e}");
-                                        }
+                                    } else if let Err(e) = aura_inner.start_animation(json).await {
+                                        error!("Failed to start animation: {e}");
                                     }
                                 });
                             });

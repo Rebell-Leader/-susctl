@@ -348,7 +348,8 @@ fn main() {
             "a" => {
                 println!("Auto-scan mode (0 to {})...", scan_len - 1);
                 let delay = std::time::Duration::from_millis(10);
-                for idx in current_index..scan_len {
+                let start_index = current_index;
+                for idx in start_index..scan_len {
                     write_single_led(&proxy, anime_type, idx, brightness);
                     print!("\rIndex: {} / {}   ", idx, scan_len - 1);
                     io::stdout().flush().unwrap();

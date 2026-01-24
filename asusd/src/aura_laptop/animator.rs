@@ -27,6 +27,12 @@ pub struct AnimatorState {
     pub running: Arc<AtomicBool>,
 }
 
+impl Default for AnimatorState {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl AnimatorState {
     pub fn new() -> Self {
         Self {
