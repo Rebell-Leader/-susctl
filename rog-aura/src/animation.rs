@@ -50,7 +50,6 @@ pub enum AnimationMode {
     },
 }
 
-
 impl AnimationMode {
     /// Returns true if this is an active animation mode
     pub fn is_active(&self) -> bool {
