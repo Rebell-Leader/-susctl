@@ -131,6 +131,7 @@ impl AuraZbus {
     /// the effect is stored and config written to disk.
     #[zbus(property)]
     async fn set_led_mode(&mut self, num: AuraModeNum) -> Result<(), ZbErr> {
+        self.0.animator.signal_stop();
         let mut config = self.0.config.lock().await;
         config.current_mode = num;
         self.0.write_current_config_mode(&mut config).await?;
@@ -163,6 +164,7 @@ impl AuraZbus {
     /// the effect is stored and config written to disk.
     #[zbus(property)]
     async fn set_led_mode_data(&mut self, effect: AuraEffect) -> Result<(), ZbErr> {
+        self.0.animator.signal_stop();
         let mut config = self.0.config.lock().await;
         if !config.support_data.basic_modes.contains(&effect.mode)
             || effect.zone != AuraZone::None
@@ -228,6 +230,70 @@ impl AuraZbus {
         let mut config = self.0.config.lock().await;
         self.0.write_effect_block(&mut config, &data).await?;
         Ok(())
+    }
+
+    /// Start a software-controlled animation.
+    /// Animations run in the daemon and persist when GUI is closed.
+    /// `mode_json` is a JSON-serialized AnimationMode.
+    async fn start_animation(&self, mode_json: String) -> Result<(), ZbErr> {
+        // Deserialize the mode from JSON
+        let mode: rog_aura::AnimationMode = serde_json::from_str(&mode_json)
+            .map_err(|e| ZbErr::Failed(format!("Invalid animation mode JSON: {}", e)))?;
+
+        // Stop any existing animation first
+        self.0.animator.signal_stop();
+
+        // Wait for previous thread to stop
+        // Check for up to 1 second
+        for _ in 0..20 {
+            if !self.0.animator.is_running() {
+                break;
+            }
+            std::thread::sleep(std::time::Duration::from_millis(50));
+        }
+
+        // Set new mode and clear stop flag (using std::sync::Mutex)
+        if let Ok(mut guard) = self.0.animator.mode.lock() {
+            *guard = mode.clone();
+        }
+        self.0.animator.clear_stop();
+
+        // Spawn the animation thread
+        if mode.is_active() {
+            super::animator::spawn_animator(self.0.clone(), self.0.animator.clone());
+            info!("Started animation: {:?}", mode);
+        }
+        Ok(())
+    }
+
+    /// Stop any running animation
+    async fn stop_animation(&self) -> Result<(), ZbErr> {
+        self.0.animator.signal_stop();
+        if let Ok(mut guard) = self.0.animator.mode.lock() {
+            *guard = rog_aura::AnimationMode::None;
+        }
+        info!("Stopped animation");
+        Ok(())
+    }
+
+    /// Check if an animation is currently running
+    #[zbus(property)]
+    async fn animation_running(&self) -> bool {
+        if let Ok(mode) = self.0.animator.mode.lock() {
+            mode.is_active() && !self.0.animator.should_stop()
+        } else {
+            false
+        }
+    }
+
+    /// Get the current animation mode as JSON
+    #[zbus(property)]
+    async fn animation_mode(&self) -> String {
+        if let Ok(mode) = self.0.animator.mode.lock() {
+            serde_json::to_string(&*mode).unwrap_or_else(|_| "\"None\"".to_string())
+        } else {
+            "\"None\"".to_string()
+        }
     }
 }
 

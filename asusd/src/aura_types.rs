@@ -202,6 +202,7 @@ impl DeviceHandle {
             hid: device,
             backlight,
             config: Arc::new(Mutex::new(config)),
+            animator: Arc::new(crate::aura_laptop::animator::AnimatorState::new()),
         };
         aura.do_initialization().await?;
         Ok(Self::Aura(aura))
