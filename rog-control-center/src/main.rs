@@ -11,16 +11,21 @@ use gumdrop::Options;
 use log::{debug, info, warn, LevelFilter};
 use rog_control_center::cli_options::CliStart;
 use rog_control_center::config::Config;
+use tokio::runtime::Runtime;
+
+thread_local! {
+    pub static UI: std::cell::RefCell<Option<MainWindow>> = Default::default();
+    pub static TRAY_TOOLTIP: std::cell::RefCell<Option<TrayTooltip>> = Default::default();
+}
 use rog_control_center::error::Result;
 use rog_control_center::notify::start_notifications;
 use rog_control_center::slint::ComponentHandle;
-use rog_control_center::tray::init_tray;
+use rog_control_center::tray::{init_tray, TrayEvent, TrayStats};
 use rog_control_center::ui::setup_window;
 use rog_control_center::zbus_proxies::{
     AppState, ROGCCZbus, ROGCCZbusProxyBlocking, ZBUS_IFACE, ZBUS_PATH,
 };
-use rog_control_center::{print_versions, MainWindow};
-use tokio::runtime::Runtime;
+use rog_control_center::{print_versions, MainWindow, TrayTooltip};
 
 #[tokio::main]
 async fn main() -> Result<()> {
@@ -165,17 +170,33 @@ async fn main() -> Result<()> {
 
     start_notifications(config.clone(), &rt)?;
 
-    if enable_tray_icon {
-        init_tray(supported_properties, config.clone());
-    }
+    let (tray_tx, mut tray_rx) = tokio::sync::mpsc::unbounded_channel();
+    // Channel for broadcasting system stats to the tray tooltip
+    let (stats_tx, stats_rx) = tokio::sync::watch::channel(TrayStats::default());
 
-    thread_local! { pub static UI: std::cell::RefCell<Option<MainWindow>> = Default::default()};
+    if enable_tray_icon {
+        init_tray(supported_properties, config.clone(), tray_tx, stats_rx);
+    }
     // i_slint_backend_selector::with_platform(|_| Ok(())).unwrap();
 
     if !startup_in_background {
         if let Ok(mut app_state) = app_state.lock() {
             *app_state = AppState::MainWindowShouldOpen;
         }
+    } else {
+        // Even in background, we need the UI handle for status polling and tray sync
+        let config_copy = config.clone();
+        let stats_tx_copy = stats_tx.clone();
+        slint::invoke_from_event_loop(move || {
+            UI.with(|ui_cell| {
+                let mut ui = ui_cell.borrow_mut();
+                if ui.is_none() {
+                    let newui = setup_window(config_copy, stats_tx_copy.clone());
+                    ui.replace(newui);
+                }
+            });
+        })
+        .ok();
     }
 
     if std::env::var("RUST_TRANSLATIONS").is_ok() {
@@ -187,18 +208,21 @@ async fn main() -> Result<()> {
         slint::init_translations!(concat!(env!("CARGO_MANIFEST_DIR"), "/translations/"));
     }
 
-    // Prefetch supported Aura modes once at startup and move into the
-    // spawned UI thread so the UI uses a stable, immutable list.
-    let prefetched_supported: std::sync::Arc<Option<Vec<i32>>> = std::sync::Arc::new(
-        rog_control_center::ui::setup_aura::prefetch_supported_basic_modes().await,
-    );
-
     thread::spawn(move || {
         let mut state = AppState::StartingUp;
         loop {
+            // Handle tray events
+            while let Ok(event) = tray_rx.try_recv() {
+                match event {
+                    TrayEvent::ToggleTooltip(_, _) => {
+                        // Native tooltip handled by ksni, no custom window needed
+                    }
+                }
+            }
+
             if is_rog_ally {
                 let config_copy_2 = config.clone();
-                let newui = setup_window(config.clone(), prefetched_supported.clone());
+                let newui = setup_window(config.clone(), stats_tx.clone());
                 newui.window().on_close_requested(move || {
                     exit(0);
                 });
@@ -239,9 +263,7 @@ async fn main() -> Result<()> {
 
                 let config_copy = config.clone();
                 let app_state_copy = app_state.clone();
-                // Avoid moving the original `prefetched_supported` into the
-                // closure — clone an Arc for the closure to capture.
-                let pref_for_invoke = prefetched_supported.clone();
+                let stats_tx_loop = stats_tx.clone();
                 slint::invoke_from_event_loop(move || {
                     UI.with(|ui| {
                         let app_state_copy = app_state_copy.clone();
@@ -256,7 +278,7 @@ async fn main() -> Result<()> {
                             });
                         } else {
                             let config_copy_2 = config_copy.clone();
-                            let newui = setup_window(config_copy, pref_for_invoke.clone());
+                            let newui = setup_window(config_copy, stats_tx_loop.clone());
                             newui.window().on_close_requested(move || {
                                 if let Ok(mut app_state) = app_state_copy.lock() {
                                     *app_state = AppState::MainWindowClosed;
