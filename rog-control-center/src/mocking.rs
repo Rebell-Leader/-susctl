@@ -8,7 +8,6 @@ use rog_platform::supported::{
     PlatformProfileFunctions, RogBiosSupportedFunctions, SupportedFunctions,
 };
 use rog_profiles::fan_curve_set::{CurveData, FanCurveSet};
-use supergfxctl::pci_device::{GfxMode, GfxPower};
 
 use crate::error::Result;
 

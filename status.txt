@@ -1,0 +1,46 @@
+interactive rebase in progress; onto 5d4b164b
+Last commands done (5 commands done):
+   pick 19dc1b28 # feat(asusd): Implement threaded Aura animator and hardware coordination
+   pick d92478e8 # feat(rog-control-center): Implement logic for fans, aura, and monitoring
+  (see more in file .git/rebase-merge/done)
+Next command to do (1 remaining command):
+   pick 43227544 # chore: update dependencies and config
+  (use "git rebase --edit-todo" to view and edit)
+You are currently rebasing branch 'main' on '5d4b164b'.
+  (fix conflicts and then run "git rebase --continue")
+  (use "git rebase --skip" to skip this patch)
+  (use "git rebase --abort" to check out the original branch)
+
+Changes to be committed:
+  (use "git restore --staged <file>..." to unstage)
+	modified:   rog-control-center/Cargo.toml
+	modified:   rog-control-center/src/mocking.rs
+	modified:   rog-control-center/src/notify.rs
+	modified:   rog-control-center/src/tray.rs
+	new file:   rog-control-center/src/ui/setup_fan_curve_custom.rs
+	modified:   rog-control-center/src/ui/setup_fans.rs
+	new file:   rog-control-center/src/ui/setup_screenpad.rs
+	new file:   rog-control-center/src/ui/setup_slash.rs
+	new file:   rog-control-center/src/ui/setup_status.rs
+	modified:   rog-control-center/src/ui/setup_system.rs
+
+Unmerged paths:
+  (use "git restore --staged <file>..." to unstage)
+  (use "git add <file>..." to mark resolution)
+	both modified:   rog-control-center/src/main.rs
+	both modified:   rog-control-center/src/ui/mod.rs
+	both modified:   rog-control-center/src/ui/setup_aura.rs
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+	diagnose.sh
+	status.txt
+
+--- LOG ---
+commit 55b7c245568e9eef869a3b69a57ef28b90000ab0
+Author: mihai2mn <mihai2mn@users.noreply.gitlab.com>
+Date:   Sat Jan 24 16:53:08 2026 +0100
+
+    feat(asusd): Implement threaded Aura animator and hardware coordination
+--- REBASE DIR ---
+.git/rebase-merge

@@ -1,0 +1,36 @@
+import { Palette, TabWidget, Button, CheckBox, ScrollView } from "std-widgets.slint";
+import { Graph, Node } from "../widgets/graph.slint";
+import { SystemToggle, SystemDropdown } from "../widgets/common.slint";
+import { Profile, FanType, FanPageData } from "../types/fan_types.slint";
+
+export global GPUPageData {
+    // GPU mode and device state
+    in-out property <int> gpu_mux_mode: 1; // 0 = Ultra/Discreet, 1 = Integrated/Optimus
+    in-out property <int> dgpu_disabled: 0; // 1 == dGPU disabled
+    in-out property <int> egpu_enabled: 0; // 1 == eGPU (XGMobile) enabled
+    in-out property <[string]> gpu_modes_choises: [@tr("Ultra"), @tr("Integrated")];
+    callback cb_gpu_mux_mode(int);
+    callback cb_dgpu_disabled(int);
+    callback cb_egpu_enabled(int);
+}
+
+export component PageGPU inherits Rectangle {
+    clip: true;
+
+    ScrollView {
+        VerticalLayout {
+            padding: 10px;
+            spacing: 10px;
+            SystemDropdown {
+                text: @tr("GPU mode");
+                current_index <=> GPUPageData.gpu_mux_mode;
+                current_value: GPUPageData.gpu_modes_choises[GPUPageData.gpu_mux_mode];
+                model <=> GPUPageData.gpu_modes_choises;
+                selected => {
+                    GPUPageData.cb_gpu_mux_mode(0);
+                    GPUPageData.cb_gpu_mux_mode(1);
+                }
+            }
+        }
+    }
+}

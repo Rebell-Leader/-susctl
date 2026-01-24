@@ -29,6 +29,7 @@ rog_dbus = { path = "../rog-dbus" }
 rog_aura = { path = "../rog-aura" }
 rog_profiles = { path = "../rog-profiles" }
 rog_platform = { path = "../rog-platform" }
+rog_slash = { path = "../rog-slash" }
 supergfxctl = { git = "https://gitlab.com/asus-linux/supergfxctl.git", default-features = false }
 dmi_id = { path = "../dmi-id" }
 
@@ -36,15 +37,17 @@ gumdrop.workspace = true
 log.workspace = true
 env_logger.workspace = true
 
-tokio.workspace = true
+tokio = { workspace = true, features = ["fs"] }
 serde.workspace = true
 zbus.workspace = true
+ron.workspace = true
 dirs.workspace = true
 notify-rust.workspace = true
 concat-idents.workspace = true
 futures-util.workspace = true
 
 versions.workspace = true
+serde_json = "1.0.149"
 
 [dependencies.slint]
 git = "https://github.com/slint-ui/slint.git"

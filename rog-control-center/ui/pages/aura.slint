@@ -1,8 +1,28 @@
-import { SystemDropdown, RogItem, SystemToggle, SystemToggleVert } from "../widgets/common.slint";
-import { Palette, Button, ComboBox, VerticalBox, GroupBox } from "std-widgets.slint";
-import { StyleMetrics, Slider, HorizontalBox, TextEdit, SpinBox, LineEdit, ScrollView } from "std-widgets.slint";
+import {
+    SystemDropdown,
+    RogItem,
+    SystemToggle,
+    SystemToggleVert,
+} from "../widgets/common.slint";
+import { Button, ComboBox, VerticalBox, GroupBox } from "std-widgets.slint";
+import { RogPalette } from "../themes/rog_theme.slint";
+import {
+    StyleMetrics,
+    Slider,
+    HorizontalBox,
+    TextEdit,
+    SpinBox,
+    LineEdit,
+    ScrollView,
+} from "std-widgets.slint";
 import { ColourSlider } from "../widgets/colour_picker.slint";
-import { AuraPageData, AuraDevType, PowerZones, LaptopAuraPower, AuraEffect } from "../types/aura_types.slint";
+import {
+    AuraPageData,
+    AuraDevType,
+    PowerZones,
+    LaptopAuraPower,
+    AuraEffect,
+} from "../types/aura_types.slint";
 import { AuraPowerGroup, AuraPowerGroupOld } from "../widgets/aura_power.slint";
 
 export component PageAura inherits Rectangle {
@@ -17,6 +37,7 @@ export component PageAura inherits Rectangle {
         c2.final_colour = AuraPageData.led_mode_data.colour2;
         c2.external_colour_change();
     }
+
     ScrollView {
         VerticalLayout {
             padding: 10px;
@@ -41,10 +62,14 @@ export component PageAura inherits Rectangle {
                     current_value: AuraPageData.available_mode_names[self.current-index];
                     model <=> AuraPageData.available_mode_names;
                     selected => {
-                        AuraPageData.led_mode_data.mode = AuraPageData.led_mode;
-                        AuraPageData.led_mode_data.mode = AuraPageData.current_available_mode;
-                        self.current_value = AuraPageData.available_mode_names[self.current-index];
-                        AuraPageData.cb_led_mode(AuraPageData.current_available_mode);
+                        AuraPageData.apply_effect({
+                            mode: AuraPageData.supported_basic_modes[self.current-index],
+                            zone: AuraPageData.led_mode_data.zone,
+                            colour1: AuraPageData.led_mode_data.colour1,
+                            colour2: AuraPageData.led_mode_data.colour2,
+                            speed: AuraPageData.led_mode_data.speed,
+                            direction: AuraPageData.led_mode_data.direction,
+                        });
                     }
                 }
             }
@@ -53,6 +78,7 @@ export component PageAura inherits Rectangle {
                 min-height: 220px;
                 max-height: 400px;
                 HorizontalLayout {
+                    padding-top: 5px;
                     spacing: 10px;
                     VerticalBox {
                         Text {
@@ -63,18 +89,24 @@ export component PageAura inherits Rectangle {
 
                         HorizontalBox {
                             c1 := ColourSlider {
-                                enabled: AuraPageData.led_mode == 0 || AuraPageData.led_mode == 1 || AuraPageData.led_mode == 4 || AuraPageData.led_mode == 6 || AuraPageData.led_mode == 7 || AuraPageData.led_mode == 8 || AuraPageData.led_mode == 10 || AuraPageData.led_mode == 11 || AuraPageData.led_mode == 12;
+                                enabled: AuraPageData.colour1_enabled;
                                 final_colour <=> AuraPageData.color1;
                                 colourbox <=> AuraPageData.colorbox1;
-                                set_hex_from_colour(c1) => {
-                                    return AuraPageData.cb_hex_from_colour(c1);
+                                set_hex_from_colour(c) => {
+                                    return AuraPageData.cb_hex_from_colour(c);
                                 }
                                 hex_to_colour(s) => {
                                     return AuraPageData.cb_hex_to_colour(s);
                                 }
                                 released => {
-                                    AuraPageData.led_mode_data.colour1 = AuraPageData.color1;
-                                    AuraPageData.cb_led_mode_data(AuraPageData.led_mode_data);
+                                    AuraPageData.apply_effect({
+                                        mode: AuraPageData.led_mode_data.mode,
+                                        zone: AuraPageData.led_mode_data.zone,
+                                        colour1: AuraPageData.color1,
+                                        colour2: AuraPageData.led_mode_data.colour2,
+                                        speed: AuraPageData.led_mode_data.speed,
+                                        direction: AuraPageData.led_mode_data.direction,
+                                    });
                                 }
                             }
                         }
@@ -89,18 +121,24 @@ export component PageAura inherits Rectangle {
 
                         HorizontalBox {
                             c2 := ColourSlider {
-                                enabled: AuraPageData.led_mode == 1 || AuraPageData.led_mode == 4;
+                                enabled: AuraPageData.colour2_enabled;
                                 final_colour <=> AuraPageData.color2;
                                 colourbox <=> AuraPageData.colorbox2;
-                                set_hex_from_colour(c1) => {
-                                    return AuraPageData.cb_hex_from_colour(c1);
+                                set_hex_from_colour(c) => {
+                                    return AuraPageData.cb_hex_from_colour(c);
                                 }
                                 hex_to_colour(s) => {
                                     return AuraPageData.cb_hex_to_colour(s);
                                 }
                                 released => {
-                                    AuraPageData.led_mode_data.colour2 = AuraPageData.color2;
-                                    AuraPageData.cb_led_mode_data(AuraPageData.led_mode_data);
+                                    AuraPageData.apply_effect({
+                                        mode: AuraPageData.led_mode_data.mode,
+                                        zone: AuraPageData.led_mode_data.zone,
+                                        colour1: AuraPageData.led_mode_data.colour1,
+                                        colour2: AuraPageData.color2,
+                                        speed: AuraPageData.led_mode_data.speed,
+                                        direction: AuraPageData.led_mode_data.direction,
+                                    });
                                 }
                             }
                         }
@@ -113,8 +151,6 @@ export component PageAura inherits Rectangle {
                 min-height: 80px;
                 max-height: 90px;
                 RogItem {
-                    //padding only has effect on layout elements
-                    //padding: 0px;
                     VerticalBox {
                         Text {
                             text: @tr("Zone");
@@ -123,22 +159,25 @@ export component PageAura inherits Rectangle {
                         }
 
                         ComboBox {
-                            // enabled: AuraPageData.led_mode == ;
-                        enabled: false;
+                            enabled: false;
                             current_index <=> AuraPageData.zone;
                             current_value: AuraPageData.zone_names[self.current-index];
                             model <=> AuraPageData.zone_names;
                             selected => {
-                                AuraPageData.led_mode_data.zone = self.current-index;
-                                AuraPageData.cb_led_mode_data(AuraPageData.led_mode_data);
+                                AuraPageData.apply_effect({
+                                    mode: AuraPageData.led_mode_data.mode,
+                                    zone: self.current-index,
+                                    colour1: AuraPageData.led_mode_data.colour1,
+                                    colour2: AuraPageData.led_mode_data.colour2,
+                                    speed: AuraPageData.led_mode_data.speed,
+                                    direction: AuraPageData.led_mode_data.direction,
+                                });
                             }
                         }
                     }
                 }
 
                 RogItem {
-                    //padding only has effect on layout elements
-                    //padding: 0px;
                     VerticalBox {
                         Text {
                             text: @tr("Direction");
@@ -147,21 +186,25 @@ export component PageAura inherits Rectangle {
                         }
 
                         ComboBox {
-                            enabled: AuraPageData.led_mode == 3;
+                            enabled: AuraPageData.direction_enabled;
                             current_index <=> AuraPageData.direction;
                             current_value: AuraPageData.direction_names[self.current-index];
                             model <=> AuraPageData.direction_names;
                             selected => {
-                                AuraPageData.led_mode_data.direction = self.current-index;
-                                AuraPageData.cb_led_mode_data(AuraPageData.led_mode_data);
+                                AuraPageData.apply_effect({
+                                    mode: AuraPageData.led_mode_data.mode,
+                                    zone: AuraPageData.led_mode_data.zone,
+                                    colour1: AuraPageData.led_mode_data.colour1,
+                                    colour2: AuraPageData.led_mode_data.colour2,
+                                    speed: AuraPageData.led_mode_data.speed,
+                                    direction: self.current-index,
+                                });
                             }
                         }
                     }
                 }
 
                 RogItem {
-                    //padding only has effect on layout elements
-                    //padding: 0px;
                     VerticalBox {
                         Text {
                             text: @tr("Speed");
@@ -170,13 +213,53 @@ export component PageAura inherits Rectangle {
                         }
 
                         ComboBox {
-                            enabled: AuraPageData.led_mode == 1 || AuraPageData.led_mode == 2 || AuraPageData.led_mode == 3 || AuraPageData.led_mode == 4 || AuraPageData.led_mode == 5 || AuraPageData.led_mode == 6 || AuraPageData.led_mode == 7 || AuraPageData.led_mode == 8;
+                            enabled: AuraPageData.speed_enabled;
                             current_index <=> AuraPageData.speed;
                             current_value: AuraPageData.speed_names[self.current-index];
                             model <=> AuraPageData.speed_names;
                             selected => {
-                                AuraPageData.led_mode_data.speed = self.current-index;
-                                AuraPageData.cb_led_mode_data(AuraPageData.led_mode_data);
+                                AuraPageData.apply_effect({
+                                    mode: AuraPageData.led_mode_data.mode,
+                                    zone: AuraPageData.led_mode_data.zone,
+                                    colour1: AuraPageData.led_mode_data.colour1,
+                                    colour2: AuraPageData.led_mode_data.colour2,
+                                    speed: self.current-index,
+                                    direction: AuraPageData.led_mode_data.direction,
+                                });
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Software Animation Controls (for Static-only keyboards)
+            if AuraPageData.soft_animation_available: RogItem {
+                min-height: 100px;
+                VerticalLayout {
+                    padding: 10px;
+                    spacing: 8px;
+                    Text {
+                        text: @tr("Software Animation (Static-only keyboards)");
+                        font-size: 14px;
+                        font-weight: 600;
+                        color: RogPalette.accent;
+                    }
+
+                    HorizontalLayout {
+                        spacing: 20px;
+                        VerticalLayout {
+                            Text {
+                                text: @tr("Animation Mode");
+                                color: RogPalette.text-secondary;
+                            }
+
+                            ComboBox {
+                                current_index <=> AuraPageData.soft_animation_mode;
+                                current_value: AuraPageData.soft_animation_modes[self.current-index];
+                                model <=> AuraPageData.soft_animation_modes;
+                                selected => {
+                                    AuraPageData.cb_soft_animation_mode(AuraPageData.soft_animation_mode);
+                                }
                             }
                         }
                     }
@@ -195,16 +278,21 @@ export component PageAura inherits Rectangle {
         }
 
         if root.show_fade_cover: Rectangle {
-            background: Palette.background;
+            background: RogPalette.background;
             opacity: 0.8;
             TouchArea {
                 height: 100%;
                 width: 100%;
+                clicked => {
+                    root.show_fade_cover = false;
+                    root.show_aura_power = false;
+                }
             }
         }
     }
 
     if root.show_aura_power && AuraPageData.device_type == AuraDevType.New: Rectangle {
+        background: RogPalette.background;
         width: 100%;
         height: 100%;
         opacity: 1;
@@ -244,8 +332,8 @@ export component PageAura inherits Rectangle {
             Button {
                 x: root.width - self.width - 6px;
                 y: 6px;
-                text: "X";
-                height: 40px;
+                text: "✕";
+                height: 36px;
                 clicked => {
                     root.show_aura_power = false;
                     root.show_fade_cover = false;
@@ -255,6 +343,7 @@ export component PageAura inherits Rectangle {
     }
 
     if root.show_aura_power && AuraPageData.device_type == AuraDevType.Old: Rectangle {
+        background: RogPalette.background;
         width: 100%;
         height: 100%;
         opacity: 1;
@@ -266,7 +355,10 @@ export component PageAura inherits Rectangle {
                 alignment: LayoutAlignment.start;
 
                 Text {
-                    text: "TODO: In progress";
+                    text: "LED Power Zones (Legacy)";
+                    font-size: 16px;
+                    font-weight: 600;
+                    color: #ff0033;
                 }
 
                 for state[idx] in AuraPageData.led_power.states: old_zone := AuraPowerGroupOld {
@@ -297,8 +389,8 @@ export component PageAura inherits Rectangle {
             Button {
                 x: root.width - self.width - 6px;
                 y: 6px;
-                text: "X";
-                height: 40px;
+                text: "✕";
+                height: 36px;
                 clicked => {
                     root.show_aura_power = false;
                     root.show_fade_cover = false;
