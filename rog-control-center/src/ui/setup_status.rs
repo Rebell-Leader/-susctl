@@ -57,6 +57,9 @@ pub fn setup_status(
             }
             let ui_weak_loop = ui_weak.clone(); // Clone ui_weak for this iteration
 
+            // Check dGPU state
+            let is_dgpu_active = get_dgpu_state();
+
             // Send to Tray
             let _ = stats_tx.send(TrayStats {
                 cpu_temp: format!("{}", cpu_temp),
@@ -65,6 +68,7 @@ pub fn setup_status(
                 gpu_fan: format!("{}", gpu_fan),
                 power_w: format!("{:.1}", power_w),
                 power_profile: profile_str,
+                is_dgpu_active,
             });
 
             let _ = slint::invoke_from_event_loop(move || {
@@ -147,4 +151,24 @@ async fn read_power() -> i32 {
         }
     }
     p
+}
+
+// Simple check: if /sys/class/drm/card1 exists, dGPU is likely active/available.
+// Integrated is always card0.
+fn get_dgpu_state() -> bool {
+    if let Ok(entries) = std::fs::read_dir("/sys/class/drm") {
+        let mut card_count = 0;
+        for entry in entries.flatten() {
+            if let Ok(name) = entry.file_name().into_string() {
+                if name.starts_with("card")
+                    && name.chars().nth(4).is_some_and(|c| c.is_ascii_digit())
+                    && !name.contains('-')
+                {
+                    card_count += 1;
+                }
+            }
+        }
+        return card_count > 1;
+    }
+    true // Fallback to true (Red) if check fails
 }

@@ -25,3 +25,6 @@ desktop-extensions/gnome*/*.zip
 CLAUDE.md
 AGENTS.md
 /reference
+
+# Secrets
+.gitlab_token

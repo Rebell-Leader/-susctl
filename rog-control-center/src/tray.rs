@@ -19,6 +19,7 @@ const TRAY_ICON_PATH: &str = "/usr/share/icons/hicolor/512x512/apps/";
 struct Icons {
     #[allow(dead_code)]
     rog_red: Icon,
+    rog_blue: Icon,
 }
 
 static ICONS: OnceLock<Icons> = OnceLock::new();
@@ -76,6 +77,7 @@ pub struct TrayStats {
     pub gpu_fan: String,
     pub power_w: String,
     pub power_profile: String,
+    pub is_dgpu_active: bool,
 }
 
 impl ksni::Tray for AsusTray {
@@ -151,6 +153,7 @@ pub fn init_tray(
         let proxy = ROGCCZbusProxyBlocking::new(&user_con).unwrap();
 
         let rog_red = read_icon(&PathBuf::from("asus_notif_red.png"));
+        let rog_blue = read_icon(&PathBuf::from("asus_notif_blue.png"));
 
         let tray_init = AsusTray {
             current_title: TRAY_LABEL.to_string(),
@@ -180,6 +183,7 @@ pub fn init_tray(
         info!("Tray started");
         ICONS.get_or_init(|| Icons {
             rog_red: rog_red.clone(),
+            rog_blue: rog_blue.clone(),
         });
 
         info!("Started ROGTray");
@@ -197,6 +201,15 @@ pub fn init_tray(
                             t.gpu_fan = stats.gpu_fan;
                             t.power_w = stats.power_w;
                             t.power_profile = stats.power_profile;
+
+                            // Update icon based on dGPU state
+                            if let Some(icons) = ICONS.get() {
+                                t.current_icon = if stats.is_dgpu_active {
+                                    icons.rog_red.clone()
+                                } else {
+                                    icons.rog_blue.clone()
+                                };
+                            }
                         }).await;
                     });
                 }
