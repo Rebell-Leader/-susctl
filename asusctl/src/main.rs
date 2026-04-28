@@ -200,6 +200,7 @@ fn do_parsed(
         CliCommand::Armoury(cmd) => handle_armoury_command(cmd)?,
         CliCommand::Backlight(cmd) => handle_backlight(cmd)?,
         CliCommand::Battery(cmd) => handle_battery(cmd, &conn)?,
+        CliCommand::FnLock(cmd) => handle_fnlock(cmd, supported_properties, &conn)?,
         CliCommand::Info(info_opt) => {
             handle_info(info_opt, supported_interfaces, supported_properties)?
         }
@@ -229,6 +230,49 @@ fn handle_battery(
             let limit = proxy.charge_control_end_threshold()?;
             println!("Current battery charge limit: {}%", limit);
         }
+    }
+
+    Ok(())
+}
+
+fn handle_fnlock(
+    cmd: &FnLockCommand,
+    supported_properties: &[Properties],
+    conn: &Connection,
+) -> Result<(), Box<dyn std::error::Error>> {
+    if !supported_properties.contains(&Properties::FnLockStatus) {
+        println!(
+            "Fn lock is not supported on this system.\n\
+             The kernel asus_wmi driver must expose fnlock_status for this model.\n\
+             Check: /sys/devices/platform/asus-nb-wmi/fnlock_status"
+        );
+        return Ok(());
+    }
+
+    let proxy = PlatformProxyBlocking::new(conn)?;
+
+    if let Some(enable) = cmd.set {
+        proxy.set_fnlock_status(enable)?;
+        println!(
+            "Fn lock set to: {} ({})",
+            enable,
+            if enable {
+                "ON - F1-F12 primary, Fn+F-key for media/system"
+            } else {
+                "OFF - media/system keys primary, Fn+F-key for F1-F12"
+            }
+        );
+    } else {
+        let status = proxy.fnlock_status()?;
+        println!(
+            "Fn lock: {} ({})",
+            if status { "ON" } else { "OFF" },
+            if status {
+                "F1-F12 primary, Fn+F-key for media/system"
+            } else {
+                "media/system keys primary, Fn+F-key for F1-F12"
+            }
+        );
     }
 
     Ok(())

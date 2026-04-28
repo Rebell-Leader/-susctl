@@ -4,6 +4,8 @@ use log::{debug, error, info};
 use rog_aura::keyboard::LaptopAuraPower;
 use rog_aura::{AuraDeviceType, PowerZones};
 use rog_dbus::zbus_aura::AuraProxy;
+use rog_dbus::zbus_platform::PlatformProxy;
+use rog_platform::platform::Properties;
 use slint::{ComponentHandle, Model, RgbaColor, SharedString};
 
 use crate::config::Config;
@@ -71,6 +73,58 @@ pub fn setup_aura_page(
         format!("#{:02X}{:02X}{:02X}", c.red(), c.green(), c.blue()).into()
     });
     g.on_cb_hex_to_colour(|s| decode_hex(s.as_str()).into());
+
+    // Fn-lock: wire up via platform proxy if the property is supported
+    let fn_lock_handle = ui.as_weak();
+    tokio::spawn(async move {
+        let conn = match zbus::Connection::system().await {
+            Ok(c) => c,
+            Err(e) => {
+                error!("DBus system connection failed for fn-lock: {e}");
+                return Ok::<(), zbus::Error>(());
+            }
+        };
+        let platform = match PlatformProxy::builder(&conn).build().await {
+            Ok(p) => p,
+            Err(e) => {
+                error!("PlatformProxy failed for fn-lock: {e}");
+                return Ok::<(), zbus::Error>(());
+            }
+        };
+        let supported = platform.supported_properties().await.unwrap_or_default();
+        if !supported.contains(&Properties::FnLockStatus) {
+            return Ok(());
+        }
+        let current = platform.fnlock_status().await.unwrap_or(false);
+        fn_lock_handle
+            .upgrade_in_event_loop(move |h| {
+                h.global::<AuraPageData>().set_fn_lock_available(true);
+                h.global::<AuraPageData>().set_fn_lock(current);
+            })
+            .map_err(|e| error!("{e}"))
+            .ok();
+
+        let weak = fn_lock_handle.clone();
+        fn_lock_handle
+            .upgrade_in_event_loop(move |h| {
+                h.global::<AuraPageData>().on_cb_fn_lock(move |enabled| {
+                    let p = platform.clone();
+                    let w = weak.clone();
+                    tokio::spawn(async move {
+                        show_toast(
+                            format!("Fn lock set to {enabled}").into(),
+                            "Fn lock failed".into(),
+                            w,
+                            p.set_fnlock_status(enabled).await,
+                        );
+                    });
+                });
+            })
+            .map_err(|e| error!("{e}"))
+            .ok();
+
+        Ok(())
+    });
 
     let handle = ui.as_weak();
     tokio::spawn(async move {

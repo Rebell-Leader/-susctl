@@ -1,8 +1,10 @@
 use std::cell::RefCell;
 use std::fs::{File, OpenOptions};
 use std::io::Write;
+use std::os::unix::io::AsRawFd;
 use std::path::PathBuf;
 
+use libc;
 use log::{info, warn};
 use udev::Device;
 
@@ -57,7 +59,9 @@ impl HidRaw {
                             );
                         }
                         return Ok(Self {
-                            file: RefCell::new(OpenOptions::new().write(true).open(dev_node)?),
+                            file: RefCell::new(
+                                OpenOptions::new().read(true).write(true).open(dev_node)?,
+                            ),
                             devfs_path: dev_node.to_owned(),
                             prod_id: this_id_product.to_string_lossy().into(),
                             syspath: endpoint.syspath().into(),
@@ -89,7 +93,9 @@ impl HidRaw {
             if let Some(dev_node) = endpoint.devnode() {
                 if let Some(id_product) = parent.attribute_value("idProduct") {
                     return Ok(Self {
-                        file: RefCell::new(OpenOptions::new().write(true).open(dev_node)?),
+                        file: RefCell::new(
+                            OpenOptions::new().read(true).write(true).open(dev_node)?,
+                        ),
                         devfs_path: dev_node.to_owned(),
                         prod_id: id_product.to_string_lossy().into(),
                         syspath: endpoint.syspath().into(),
@@ -119,6 +125,36 @@ impl HidRaw {
             file.write_all(message).map_err(|e| {
                 PlatformError::IoPath(self.devfs_path.to_string_lossy().to_string(), e)
             })?;
+        }
+        Ok(())
+    }
+
+    /// Write a HID feature report via HIDIOCSFEATURE ioctl.
+    ///
+    /// This is required for feature reports; `write_bytes` only sends output reports.
+    pub fn write_feature_report(&self, message: &[u8]) -> Result<()> {
+        // HIDIOCSFEATURE(len) = _IOC(_IOC_WRITE|_IOC_READ, 'H', 6, len)
+        // On Linux x86_64: dir[31:30]=3, size[29:16]=len, type[15:8]='H', nr[7:0]=6
+        let len = message.len() as u64;
+        let ioctl_num: libc::c_ulong =
+            ((3u64 << 30) | ((b'H' as u64) << 8) | 6 | (len << 16)) as libc::c_ulong;
+
+        let mut buf = message.to_vec();
+
+        let fd = self
+            .file
+            .try_borrow()
+            .map_err(|_| {
+                PlatformError::MissingFunction("hidraw file borrow failed".into())
+            })?
+            .as_raw_fd();
+
+        let ret = unsafe { libc::ioctl(fd, ioctl_num, buf.as_mut_ptr()) };
+        if ret < 0 {
+            return Err(PlatformError::IoPath(
+                self.devfs_path.to_string_lossy().to_string(),
+                std::io::Error::last_os_error(),
+            ));
         }
         Ok(())
     }

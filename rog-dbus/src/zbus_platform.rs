@@ -116,4 +116,11 @@ pub trait Platform {
     /// Set if the PPT tuning group for the current profile is enabled
     #[zbus(property)]
     fn set_enable_ppt_group(&self, enable: bool) -> zbus::Result<()>;
+
+    /// FnLockStatus: true = Fn key locked (media/system keys primary, Fn+F-key for F1–F12).
+    /// false = F1–F12 primary. Requires kernel asus_wmi fnlock_status support.
+    #[zbus(property)]
+    fn fnlock_status(&self) -> zbus::Result<bool>;
+    #[zbus(property)]
+    fn set_fnlock_status(&self, status: bool) -> zbus::Result<()>;
 }
