@@ -436,7 +436,10 @@ impl CtrlPlatform {
                 return Ok(());
             }
             Err(hid_err) => {
-                warn!("set_fnlock_status: HID path unavailable ({}), trying sysfs", hid_err);
+                warn!(
+                    "set_fnlock_status: HID path unavailable ({}), trying sysfs",
+                    hid_err
+                );
             }
         }
         // Fall back to sysfs / WMI path
@@ -449,7 +452,8 @@ impl CtrlPlatform {
             warn!("fnlock_status: {}", err);
             zbus::Error::from(FdoErr::Failed(format!("RogPlatform: fnlock_status: {err}")))
         })
-    }    /// Toggle to next platform_profile. Names provided by `Profiles`.
+    }
+    /// Toggle to next platform_profile. Names provided by `Profiles`.
     /// If fan-curves are supported will also activate a fan curve for profile.
     async fn next_platform_profile(
         &mut self,

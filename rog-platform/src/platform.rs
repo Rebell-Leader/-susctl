@@ -59,7 +59,12 @@ impl RogPlatform {
         const ASUS_NKEY_KBD2_PROD: &str = "19b6";
         let hid = HidRaw::new(ASUS_NKEY_KBD2_PROD)?;
         // FEATURE_KBD_REPORT_ID=0x5a, sub-cmd=0xd0, fn-lock-cmd=0x4e, state
-        let buf = [0x5au8, 0xd0, 0x4e, u8::from(enabled)];
+        let buf = [
+            0x5au8,
+            0xd0,
+            0x4e,
+            u8::from(enabled),
+        ];
         hid.write_feature_report(&buf)
     }
 

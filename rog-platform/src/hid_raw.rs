@@ -144,9 +144,7 @@ impl HidRaw {
         let fd = self
             .file
             .try_borrow()
-            .map_err(|_| {
-                PlatformError::MissingFunction("hidraw file borrow failed".into())
-            })?
+            .map_err(|_| PlatformError::MissingFunction("hidraw file borrow failed".into()))?
             .as_raw_fd();
 
         let ret = unsafe { libc::ioctl(fd, ioctl_num, buf.as_mut_ptr()) };
