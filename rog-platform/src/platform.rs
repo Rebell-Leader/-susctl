@@ -7,7 +7,6 @@ use serde::{Deserialize, Serialize};
 use zbus::zvariant::{OwnedValue, Type, Value};
 
 use crate::error::{PlatformError, Result};
-use crate::hid_raw::HidRaw;
 use crate::{attr_bool, attr_string, attr_string_array, to_device};
 
 /// The "platform" device provides access to things like:
@@ -45,34 +44,6 @@ impl RogPlatform {
         "fnlock_status",
         path
     );
-
-    /// Set fn lock state via HID feature report sent directly to the ASUS keyboard.
-    ///
-    /// This works for keyboards using the ASUS ROG N-Key protocol (product ID 19B6,
-    /// e.g. ProArt P16) where the WMI path is a NOP. Sends `{0x5a, 0xd0, 0x4e, enabled}`
-    /// as a HID FEATURE report to `/dev/hidrawN`.
-    ///
-    /// `enabled = true`  → F1-F12 are primary (fn lock ON)
-    /// `enabled = false` → media keys are primary (fn lock OFF)
-    pub fn set_fnlock_via_hid(enabled: bool) -> Result<()> {
-        // Product ID for ASUS ROG N-Key keyboard 2 (used in ProArt P16 and others)
-        const ASUS_NKEY_KBD2_PROD: &str = "19b6";
-        let hid = HidRaw::new(ASUS_NKEY_KBD2_PROD)?;
-        // FEATURE_KBD_REPORT_ID=0x5a, sub-cmd=0xd0, fn-lock-cmd=0x4e, state
-        let buf = [
-            0x5au8,
-            0xd0,
-            0x4e,
-            u8::from(enabled),
-        ];
-        hid.write_feature_report(&buf)
-    }
-
-    /// Returns true if a compatible ASUS N-Key HID device is present for fn lock control.
-    pub fn set_fnlock_via_hid_available() -> bool {
-        const ASUS_NKEY_KBD2_PROD: &str = "19b6";
-        HidRaw::new(ASUS_NKEY_KBD2_PROD).is_ok()
-    }
 
     pub fn new() -> Result<Self> {
         let mut enumerator = udev::Enumerator::new().map_err(|err| {

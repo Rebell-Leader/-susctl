@@ -323,11 +323,7 @@ impl CtrlPlatform {
         );
 
         platform_name!(platform_profile, Properties::ThrottlePolicy);
-        // fnlock_status is supported if the sysfs attribute exists OR if the
-        // ASUS N-Key HID device (product 19b6) is present for direct HID control.
-        if self.platform.has_fnlock_status()
-            || rog_platform::platform::RogPlatform::set_fnlock_via_hid_available()
-        {
+        if self.platform.has_fnlock_status() {
             supported.push(Properties::FnLockStatus.to_owned());
         }
 
@@ -400,49 +396,22 @@ impl CtrlPlatform {
 
     /// FnLockStatus: when true the Fn key is locked – F1–F12 are primary.
     /// When false, media/system keys are primary.
-    /// Reads from kernel `asus_wmi` sysfs when available; falls back to false
-    /// (unknown) when only HID control is available.
+    /// Reads from the kernel `asus_wmi` sysfs attribute `fnlock_status`.
     #[zbus(property)]
     fn fnlock_status(&self) -> Result<bool, FdoErr> {
-        if self.platform.has_fnlock_status() {
-            return self.platform.get_fnlock_status().map_err(|err| {
-                warn!("fnlock_status: {}", err);
-                FdoErr::Failed(format!("RogPlatform: fnlock_status: {err}"))
-            });
+        if !self.platform.has_fnlock_status() {
+            return Err(FdoErr::NotSupported(
+                "RogPlatform: fnlock_status not supported on this model".to_owned(),
+            ));
         }
-        if rog_platform::platform::RogPlatform::set_fnlock_via_hid_available() {
-            // HID-only path: we can control but not read the state.
-            // Return false as the default/unknown state.
-            return Ok(false);
-        }
-        Err(FdoErr::NotSupported(
-            "RogPlatform: fnlock_status not supported on this model".to_owned(),
-        ))
+        self.platform.get_fnlock_status().map_err(|err| {
+            warn!("fnlock_status: {}", err);
+            FdoErr::Failed(format!("RogPlatform: fnlock_status: {err}"))
+        })
     }
 
     #[zbus(property)]
     async fn set_fnlock_status(&self, status: bool) -> Result<(), zbus::Error> {
-        // Try HID feature-report path first (works for ProArt P16 and other models
-        // with ASUS ROG N-Key keyboard 2, product ID 19b6).
-        match RogPlatform::set_fnlock_via_hid(status) {
-            Ok(()) => {
-                // Also sync the sysfs status attribute when it exists so the getter
-                // reflects the updated state.
-                if self.platform.has_fnlock_status() {
-                    if let Err(e) = self.platform.set_fnlock_status(status) {
-                        warn!("fnlock_status sysfs sync: {}", e);
-                    }
-                }
-                return Ok(());
-            }
-            Err(hid_err) => {
-                warn!(
-                    "set_fnlock_status: HID path unavailable ({}), trying sysfs",
-                    hid_err
-                );
-            }
-        }
-        // Fall back to sysfs / WMI path
         if !self.platform.has_fnlock_status() {
             return Err(zbus::Error::from(FdoErr::NotSupported(
                 "RogPlatform: fnlock_status not supported on this model".to_owned(),
