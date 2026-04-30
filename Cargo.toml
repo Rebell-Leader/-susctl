@@ -62,7 +62,6 @@ gumdrop = "^0.8"
 udev = { version = "^0.8", features = ["mio"] }
 rusb = "^0.9"
 inotify = "^0.10"
-libc = "0.2"
 
 png_pong = "^0.8"
 pix = "^0.13"
