@@ -15,6 +15,4 @@ zbus.workspace = true
 concat-idents.workspace = true
 udev.workspace = true
 inotify.workspace = true
-libc.workspace = true
-
 rusb.workspace = true
