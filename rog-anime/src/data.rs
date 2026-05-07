@@ -13,12 +13,30 @@ use crate::error::{AnimeError, Result};
 use crate::usb::{AnimAwake, AnimBooting, AnimShutdown, AnimSleeping, Brightness};
 use crate::{AnimTime, AnimeGif};
 
-/// The first 7 bytes of a USB packet are accounted for by `USB_PREFIX1` and
-/// `USB_PREFIX2`
+/// The first 7 bytes of every AniMe Matrix USB packet are the header:
+///   `[0x5e, 0xc0, 0x02, START_LO, START_HI, LEN_LO, LEN_HI]`
+///
+/// where `START` and `LEN` are little-endian `u16` values describing the
+/// LED index range this packet writes (LED indices are 1-based on the
+/// wire). The remaining bytes (up to `BLOCK_END`) carry LED color data;
+/// the rest of the 640-byte packet is zero padding.
+///
+/// Per-device packet header bytes are returned by [`usb_prefixes_for`].
+/// The chunking strategy — how many LED bytes go in each packet — is
+/// per-device-class:
+///
+/// - GA401, GA402, GU604, G835L: `PANE_LEN` bytes per pane (universal).
+/// - G635L: 490 bytes (pane 1), 320 bytes (pane 2) — exact-fit chunking
+///   for the 810-LED matrix, per G Helper's `AnimeMatrixDevice`. See
+///   the doc comment on [`usb_prefixes_for`] for source citations.
 const BLOCK_START: usize = 7;
-/// *Not* inclusive, the byte before this is the final for each "pane"
+/// *Not* inclusive — the byte before this is the final usable byte of
+/// each "pane" (packet payload region). 640 (packet size) - 6 (trailing
+/// padding required by HID feature reports).
 const BLOCK_END: usize = 634;
-/// Individual usable data length of each USB packet
+/// Maximum usable LED data length per USB packet. Used by
+/// GA401/GA402/GU604/G835L. G635L uses smaller per-pane lengths
+/// ([`G635L_PANE1_LEN`], [`G635L_PANE2_LEN`]) — see [`usb_prefixes_for`].
 const PANE_LEN: usize = BLOCK_END - BLOCK_START;
 
 /// First packet is for GA401 + GA402
@@ -52,9 +70,9 @@ pub const G635L_PANE2_LEN: usize = 320;
 /// transaction, per device class.
 ///
 /// The protocol structure for each data packet is:
-///   [0x5e, 0xc0, 0x02, <start LE u16>, <length LE u16>, ...payload..., zeros]
-/// where (start, length) describe the LED index range this packet writes
-/// (LED indices are 1-based on the wire).
+///   `[0x5e, 0xc0, 0x02, START_LO, START_HI, LEN_LO, LEN_HI, ...payload..., zeros]`
+/// where `START` and `LEN` are little-endian `u16` values describing the
+/// LED index range this packet writes (LED indices are 1-based on the wire).
 ///
 /// Per-device chunking strategy (UpdatePageLength values, sourced from
 /// G Helper's AnimeMatrixDevice — see citation at the top of the
@@ -195,7 +213,12 @@ impl AnimeType {
         match self {
             AnimeType::GA401 => PANE_LEN * 2,
             // G835L has 810 LEDs: 210 (triangle) + 600 (staggered rectangle)
-            AnimeType::G635L => 810, // TODO: This is provisional until we have a G635L to test on
+            // 810 verified on G635L hardware: 210 (triangle, rows 0-27 with
+            // lengths 1+1+2+2+...+14+14) + 600 (rectangle, rows 28-67 × 15
+            // LEDs each). USB capture evidence is shared on the asus-linux
+            // dev Discord (see commit message of the G635L USB packet
+            // chunking fix for context).
+            AnimeType::G635L => 810,
             AnimeType::G835L => 810,
             _ => PANE_LEN * 3,
         }
