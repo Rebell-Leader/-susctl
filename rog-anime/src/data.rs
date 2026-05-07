@@ -33,6 +33,56 @@ pub const USB_PREFIX2: [u8; 7] = [
 pub const USB_PREFIX3: [u8; 7] = [
     0x5e, 0xc0, 0x02, 0xe7, 0x04, 0x73, 0x02,
 ];
+/// First packet header for G635L: start=1, length=490 (per G Helper STRIX-class chunking)
+pub const USB_PREFIX_G635L_1: [u8; 7] = [
+    0x5e, 0xc0, 0x02, 0x01, 0x00, 0xea, 0x01,
+];
+/// Second packet header for G635L: start=491, length=320 (per G Helper STRIX-class chunking)
+pub const USB_PREFIX_G635L_2: [u8; 7] = [
+    0x5e, 0xc0, 0x02, 0xeb, 0x01, 0x40, 0x01,
+];
+
+/// USB packet header bytes for each pane of an AniMe Matrix data write
+/// transaction, per device class.
+///
+/// The protocol structure for each data packet is:
+///   [0x5e, 0xc0, 0x02, <start LE u16>, <length LE u16>, ...payload..., zeros]
+/// where (start, length) describe the LED index range this packet writes
+/// (LED indices are 1-based on the wire).
+///
+/// Per-device chunking strategy (UpdatePageLength values, sourced from
+/// G Helper's AnimeMatrixDevice — see citation at the top of the
+/// `G635L` arm below):
+/// - GA401: PANE_LEN bytes per pane (universal)
+/// - GA402: PANE_LEN bytes per pane (universal)
+/// - GU604: PANE_LEN bytes per pane (universal)
+/// - G835L: PANE_LEN bytes per pane — currently shares the universal
+///   chunking. Per G Helper this should be 490+320 (STRIX class),
+///   but G835L is intentionally left unchanged here pending
+///   hardware verification by a G835L owner.
+/// - G635L: 490 bytes (pane 1), 320 bytes (pane 2) — exact fit for the
+///   810-LED matrix.
+pub fn usb_prefixes_for(anime_type: AnimeType) -> Vec<[u8; 7]> {
+    match anime_type {
+        // G635L: STRIX-class chunking (490 + 320), per G Helper:
+        //   https://github.com/seerge/g-helper/blob/main/app/AnimeMatrix/AnimeMatrixDevice.cs
+        // The original protocol knowledge comes from vddCore/Starlight
+        // (referenced at the top of the same G Helper file).
+        AnimeType::G635L => vec![
+            USB_PREFIX_G635L_1, USB_PREFIX_G635L_2,
+        ],
+        // GA401 and G835L: two panes, universal PANE_LEN-based prefixes.
+        AnimeType::GA401 | AnimeType::G835L => vec![
+            USB_PREFIX1, USB_PREFIX2,
+        ],
+        // GA402, GU604, Unsupported: three panes, universal PANE_LEN-based prefixes.
+        AnimeType::GA402 | AnimeType::GU604 | AnimeType::Unsupported => {
+            vec![
+                USB_PREFIX1, USB_PREFIX2, USB_PREFIX3,
+            ]
+        }
+    }
+}
 
 #[cfg_attr(feature = "dbus", derive(Type, Value, OwnedValue))]
 #[derive(Default, Deserialize, PartialEq, Eq, Clone, Copy, Serialize, Debug)]
@@ -227,14 +277,8 @@ impl TryFrom<AnimeDataBuffer> for AnimePacketType {
             }
         }
 
-        buffers[0][..7].copy_from_slice(&USB_PREFIX1);
-        buffers[1][..7].copy_from_slice(&USB_PREFIX2);
-
-        if matches!(
-            anime.anime,
-            AnimeType::GA402 | AnimeType::GU604 | AnimeType::Unsupported
-        ) {
-            buffers[2][..7].copy_from_slice(&USB_PREFIX3);
+        for (i, prefix) in usb_prefixes_for(anime.anime).iter().enumerate() {
+            buffers[i][..7].copy_from_slice(prefix);
         }
         Ok(buffers)
     }
