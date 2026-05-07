@@ -41,6 +41,12 @@ pub const USB_PREFIX_G635L_1: [u8; 7] = [
 pub const USB_PREFIX_G635L_2: [u8; 7] = [
     0x5e, 0xc0, 0x02, 0xeb, 0x01, 0x40, 0x01,
 ];
+/// LED data length carried in G635L packet 1 (pane 1).
+/// G635L's 810-LED matrix splits exactly as 490 + 320 per G Helper STRIX-class chunking.
+pub const G635L_PANE1_LEN: usize = 490;
+/// LED data length carried in G635L packet 2 (pane 2). Equals
+/// `AnimeType::G635L.data_length() - G635L_PANE1_LEN`.
+pub const G635L_PANE2_LEN: usize = 320;
 
 /// USB packet header bytes for each pane of an AniMe Matrix data write
 /// transaction, per device class.
@@ -245,6 +251,18 @@ impl AnimeDataBuffer {
 /// The packets to be written to USB
 pub type AnimePacketType = Vec<[u8; 640]>;
 
+/// Split LED `data` into two panes within the USB packet `buffers`, with
+/// pane 1 carrying `pane1_len` bytes and pane 2 carrying the remainder.
+/// Used for G635L (490 bytes pane 1) and G835L (PANE_LEN bytes pane 1).
+fn split_into_panes(buffers: &mut [[u8; 640]], data: &[u8], pane1_len: usize) {
+    let pane1_actual = pane1_len.min(data.len());
+    buffers[0][BLOCK_START..BLOCK_START + pane1_actual].copy_from_slice(&data[..pane1_actual]);
+    if data.len() > pane1_len {
+        let pane2_len = data.len() - pane1_len;
+        buffers[1][BLOCK_START..BLOCK_START + pane2_len].copy_from_slice(&data[pane1_len..]);
+    }
+}
+
 impl TryFrom<AnimeDataBuffer> for AnimePacketType {
     type Error = AnimeError;
 
@@ -260,17 +278,16 @@ impl TryFrom<AnimeDataBuffer> for AnimePacketType {
             }
         };
 
-        // G835L has different packing: 627 bytes in pane 1, 183 bytes in pane 2
-        if anime.anime == AnimeType::G835L || anime.anime == AnimeType::G635L {
-            let data = anime.data.as_slice();
-            // Pane 1: first 627 bytes
-            let pane1_len = PANE_LEN.min(data.len());
-            buffers[0][BLOCK_START..BLOCK_START + pane1_len].copy_from_slice(&data[..pane1_len]);
-            // Pane 2: remaining bytes (183)
-            if data.len() > PANE_LEN {
-                let pane2_len = data.len() - PANE_LEN;
-                buffers[1][BLOCK_START..BLOCK_START + pane2_len].copy_from_slice(&data[PANE_LEN..]);
-            }
+        if anime.anime == AnimeType::G835L {
+            // G835L: 627 bytes in pane 1, 183 bytes in pane 2 (universal
+            // PANE_LEN-based chunking; pane 2 is shorter than the announced
+            // length but the firmware tolerates it). Behavior unchanged
+            // pending hardware verification by a G835L owner.
+            split_into_panes(&mut buffers, anime.data.as_slice(), PANE_LEN);
+        } else if anime.anime == AnimeType::G635L {
+            // G635L: 490 bytes in pane 1, 320 bytes in pane 2 — exact-fit
+            // STRIX-class chunking per G Helper's AnimeMatrixDevice.
+            split_into_panes(&mut buffers, anime.data.as_slice(), G635L_PANE1_LEN);
         } else {
             for (idx, chunk) in anime.data.as_slice().chunks(PANE_LEN).enumerate() {
                 buffers[idx][BLOCK_START..BLOCK_START + chunk.len()].copy_from_slice(chunk);
