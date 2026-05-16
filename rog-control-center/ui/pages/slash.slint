@@ -1,0 +1,186 @@
+import { SystemDropdown, SystemToggle } from "../widgets/common.slint";
+import { Palette, GroupBox, VerticalBox, HorizontalBox, Slider } from "std-widgets.slint";
+
+export global SlashPageData {
+    in-out property <bool> enabled;
+    callback cb_enabled(bool);
+
+    in-out property <int> brightness;
+    callback cb_brightness(int);
+
+    in-out property <[string]> interval_names: [
+        @tr("Slash interval" => "0"),
+        @tr("Slash interval" => "1"),
+        @tr("Slash interval" => "2"),
+        @tr("Slash interval" => "3"),
+        @tr("Slash interval" => "4"),
+        @tr("Slash interval" => "5"),
+    ];
+    in-out property <int> interval;
+    callback cb_interval(int);
+
+    in-out property <[string]> mode_names: [
+        @tr("Slash mode" => "Static"),
+        @tr("Slash mode" => "Bounce"),
+        @tr("Slash mode" => "Slash"),
+        @tr("Slash mode" => "Loading"),
+        @tr("Slash mode" => "BitStream"),
+        @tr("Slash mode" => "Transmission"),
+        @tr("Slash mode" => "Flow"),
+        @tr("Slash mode" => "Flux"),
+        @tr("Slash mode" => "Phantom"),
+        @tr("Slash mode" => "Spectrum"),
+        @tr("Slash mode" => "Hazard"),
+        @tr("Slash mode" => "Interfacing"),
+        @tr("Slash mode" => "Ramp"),
+        @tr("Slash mode" => "GameOver"),
+        @tr("Slash mode" => "Start"),
+        @tr("Slash mode" => "Buzzer"),
+    ];
+    in-out property <[string]> mode_descriptions: [
+        @tr("Slash mode desc" => "Steady glow, no animation"),
+        @tr("Slash mode desc" => "Light bounces back and forth along the strip"),
+        @tr("Slash mode desc" => "Diagonal sweep wave across the strip"),
+        @tr("Slash mode desc" => "Progress bar that slowly fills the strip"),
+        @tr("Slash mode desc" => "Random pixel flashes like a data stream"),
+        @tr("Slash mode desc" => "Pulses travel along the strip like data packets"),
+        @tr("Slash mode desc" => "Smooth light flow from one end to the other"),
+        @tr("Slash mode desc" => "Wave-like pulsing rhythm"),
+        @tr("Slash mode desc" => "Ghostly fade in and out"),
+        @tr("Slash mode desc" => "Cycles through the full color spectrum"),
+        @tr("Slash mode desc" => "Urgent warning-style flashing"),
+        @tr("Slash mode desc" => "Connection handshake effect"),
+        @tr("Slash mode desc" => "Brightness ramps up from dark to full"),
+        @tr("Slash mode desc" => "Game over — dramatic fade out"),
+        @tr("Slash mode desc" => "Startup burst, energetic ignition"),
+        @tr("Slash mode desc" => "Rapid buzzer-like strobe flash"),
+    ];
+    in-out property <int> mode;
+    callback cb_mode(int);
+
+    in-out property <bool> show_on_boot;
+    callback cb_show_on_boot(bool);
+    in-out property <bool> show_on_shutdown;
+    callback cb_show_on_shutdown(bool);
+    in-out property <bool> show_on_sleep;
+    callback cb_show_on_sleep(bool);
+    in-out property <bool> show_on_battery;
+    callback cb_show_on_battery(bool);
+    in-out property <bool> show_battery_warning;
+    callback cb_show_battery_warning(bool);
+    in-out property <bool> show_on_lid_closed;
+    callback cb_show_on_lid_closed(bool);
+}
+
+export component PageSlash inherits Rectangle {
+    VerticalLayout {
+        padding: 10px;
+        spacing: 10px;
+
+        HorizontalLayout {
+            spacing: 10px;
+            max-height: 32px;
+            SystemToggle {
+                text: @tr("Enable Slash LED");
+                checked <=> SlashPageData.enabled;
+                toggled => { SlashPageData.cb_enabled(SlashPageData.enabled) }
+            }
+        }
+
+        HorizontalLayout {
+            spacing: 10px;
+            max-height: 32px;
+            SystemDropdown {
+                text: @tr("Animation");
+                current_index <=> SlashPageData.mode;
+                current_value: SlashPageData.mode_names[SlashPageData.mode];
+                model <=> SlashPageData.mode_names;
+                selected => {
+                    self.current_value = SlashPageData.mode_names[SlashPageData.mode];
+                    SlashPageData.cb_mode(SlashPageData.mode)
+                }
+            }
+        }
+
+        Text {
+            text: SlashPageData.mode_descriptions[SlashPageData.mode];
+            color: Palette.foreground.transparentize(0.35);
+            font-size: 12px;
+            wrap: TextWrap.word-wrap;
+            padding-left: 4px;
+        }
+
+        HorizontalLayout {
+            spacing: 10px;
+            max-height: 32px;
+            SystemDropdown {
+                text: @tr("Interval");
+                current_index <=> SlashPageData.interval;
+                current_value: SlashPageData.interval_names[SlashPageData.interval];
+                model <=> SlashPageData.interval_names;
+                selected => {
+                    self.current_value = SlashPageData.interval_names[SlashPageData.interval];
+                    SlashPageData.cb_interval(SlashPageData.interval)
+                }
+            }
+        }
+
+        HorizontalLayout {
+            spacing: 10px;
+            max-height: 32px;
+            alignment: LayoutAlignment.start;
+            Text {
+                text: @tr("Brightness");
+                vertical-alignment: TextVerticalAlignment.center;
+                color: Palette.foreground;
+                width: 120px;
+            }
+            Slider {
+                minimum: 0;
+                maximum: 255;
+                value: SlashPageData.brightness;
+                changed(v) => {
+                    SlashPageData.brightness = round(v);
+                    SlashPageData.cb_brightness(SlashPageData.brightness);
+                }
+            }
+        }
+
+        GroupBox {
+            title: @tr("Show LED on...");
+            VerticalBox {
+                spacing: 6px;
+                SystemToggle {
+                    text: @tr("Boot");
+                    checked <=> SlashPageData.show_on_boot;
+                    toggled => { SlashPageData.cb_show_on_boot(SlashPageData.show_on_boot) }
+                }
+                SystemToggle {
+                    text: @tr("Shutdown");
+                    checked <=> SlashPageData.show_on_shutdown;
+                    toggled => { SlashPageData.cb_show_on_shutdown(SlashPageData.show_on_shutdown) }
+                }
+                SystemToggle {
+                    text: @tr("Sleep");
+                    checked <=> SlashPageData.show_on_sleep;
+                    toggled => { SlashPageData.cb_show_on_sleep(SlashPageData.show_on_sleep) }
+                }
+                SystemToggle {
+                    text: @tr("Battery");
+                    checked <=> SlashPageData.show_on_battery;
+                    toggled => { SlashPageData.cb_show_on_battery(SlashPageData.show_on_battery) }
+                }
+                SystemToggle {
+                    text: @tr("Low battery warning");
+                    checked <=> SlashPageData.show_battery_warning;
+                    toggled => { SlashPageData.cb_show_battery_warning(SlashPageData.show_battery_warning) }
+                }
+                SystemToggle {
+                    text: @tr("Lid closed (show while laptop is folded shut)");
+                    checked <=> SlashPageData.show_on_lid_closed;
+                    toggled => { SlashPageData.cb_show_on_lid_closed(SlashPageData.show_on_lid_closed) }
+                }
+            }
+        }
+    }
+}
