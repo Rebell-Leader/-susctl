@@ -37,6 +37,24 @@ export global SlashPageData {
         @tr("Slash mode" => "Start"),
         @tr("Slash mode" => "Buzzer"),
     ];
+    in-out property <[string]> mode_descriptions: [
+        @tr("Slash mode desc" => "Steady glow, no animation"),
+        @tr("Slash mode desc" => "Light bounces back and forth along the strip"),
+        @tr("Slash mode desc" => "Diagonal sweep wave across the strip"),
+        @tr("Slash mode desc" => "Progress bar that slowly fills the strip"),
+        @tr("Slash mode desc" => "Random pixel flashes like a data stream"),
+        @tr("Slash mode desc" => "Pulses travel along the strip like data packets"),
+        @tr("Slash mode desc" => "Smooth light flow from one end to the other"),
+        @tr("Slash mode desc" => "Wave-like pulsing rhythm"),
+        @tr("Slash mode desc" => "Ghostly fade in and out"),
+        @tr("Slash mode desc" => "Cycles through the full color spectrum"),
+        @tr("Slash mode desc" => "Urgent warning-style flashing"),
+        @tr("Slash mode desc" => "Connection handshake effect"),
+        @tr("Slash mode desc" => "Brightness ramps up from dark to full"),
+        @tr("Slash mode desc" => "Game over — dramatic fade out"),
+        @tr("Slash mode desc" => "Startup burst, energetic ignition"),
+        @tr("Slash mode desc" => "Rapid buzzer-like strobe flash"),
+    ];
     in-out property <int> mode;
     callback cb_mode(int);
 
@@ -82,6 +100,14 @@ export component PageSlash inherits Rectangle {
                     SlashPageData.cb_mode(SlashPageData.mode)
                 }
             }
+        }
+
+        Text {
+            text: SlashPageData.mode_descriptions[SlashPageData.mode];
+            color: Palette.foreground.transparentize(0.35);
+            font-size: 12px;
+            wrap: TextWrap.word-wrap;
+            padding-left: 4px;
         }
 
         HorizontalLayout {
