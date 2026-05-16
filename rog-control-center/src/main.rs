@@ -184,6 +184,14 @@ async fn main() -> Result<()> {
         }
     }
 
+    // Apply language override from config before init_translations
+    if let Ok(lock) = config.lock() {
+        if !lock.language.is_empty() {
+            std::env::set_var("LANGUAGE", &lock.language);
+            std::env::set_var("LANG", format!("{}.UTF-8", lock.language.replace('-', "_")));
+        }
+    }
+
     if std::env::var("RUST_TRANSLATIONS").is_ok() {
         // don't care about content
         log::debug!("---- Using local-dir translations");

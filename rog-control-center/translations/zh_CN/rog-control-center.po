@@ -1041,3 +1041,19 @@ msgstr "EPP（"
 msgctxt "PageSystem"
 msgid " Policy"
 msgstr "）策略"
+
+msgctxt "PageAppSettings"
+msgid "Interface language"
+msgstr "界面语言"
+
+msgctxt "PageAppSettings"
+msgid "Use system language"
+msgstr "使用系统语言"
+
+msgctxt "PageAppSettings"
+msgid "Language"
+msgstr "语言"
+
+msgctxt "PageAppSettings"
+msgid "Language change takes effect after restarting the app."
+msgstr "语言更改在重启应用程序后生效。"

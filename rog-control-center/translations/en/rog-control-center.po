@@ -2,7 +2,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2026-05-16 19:53+0000\n"
+"POT-Creation-Date: 2026-05-16 20:36+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -853,24 +853,44 @@ msgctxt "PageAnime"
 msgid "Off when on battery"
 msgstr ""
 
-#: rog-control-center/ui/pages/app_settings.slint:23
+#: rog-control-center/ui/pages/app_settings.slint:54
 msgctxt "PageAppSettings"
 msgid "Run in background after closing"
 msgstr ""
 
-#: rog-control-center/ui/pages/app_settings.slint:31
+#: rog-control-center/ui/pages/app_settings.slint:62
 msgctxt "PageAppSettings"
 msgid "Start app in background (UI closed)"
 msgstr ""
 
-#: rog-control-center/ui/pages/app_settings.slint:39
+#: rog-control-center/ui/pages/app_settings.slint:70
 msgctxt "PageAppSettings"
 msgid "Enable system tray icon"
 msgstr ""
 
-#: rog-control-center/ui/pages/app_settings.slint:47
+#: rog-control-center/ui/pages/app_settings.slint:78
 msgctxt "PageAppSettings"
 msgid "Enable dGPU notifications"
+msgstr ""
+
+#: rog-control-center/ui/pages/app_settings.slint:91
+msgctxt "PageAppSettings"
+msgid "Interface language"
+msgstr ""
+
+#: rog-control-center/ui/pages/app_settings.slint:97
+msgctxt "PageAppSettings"
+msgid "Use system language"
+msgstr ""
+
+#: rog-control-center/ui/pages/app_settings.slint:109
+msgctxt "PageAppSettings"
+msgid "Language"
+msgstr ""
+
+#: rog-control-center/ui/pages/app_settings.slint:124
+msgctxt "PageAppSettings"
+msgid "Language change takes effect after restarting the app."
 msgstr ""
 
 #: rog-control-center/ui/widgets/aura_power.slint:32

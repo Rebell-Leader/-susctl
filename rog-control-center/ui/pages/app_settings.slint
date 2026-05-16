@@ -1,4 +1,4 @@
-import { Palette } from "std-widgets.slint";
+import { Palette, ComboBox } from "std-widgets.slint";
 import { SystemToggle } from "../widgets/common.slint";
 
 export global AppSettingsPageData {
@@ -10,6 +10,36 @@ export global AppSettingsPageData {
     callback set_enable_tray_icon(bool);
     in-out property <bool> enable_dgpu_notifications;
     callback set_enable_dgpu_notifications(bool);
+
+    // Language selection. Empty string = system locale.
+    in-out property <bool> use_system_language: true;
+    callback set_use_system_language(bool);
+    in-out property <int> language_index: 0;
+    callback set_language_index(int);
+
+    // Language list without Russian
+    in-out property <[string]> language_names: [
+        "English",
+        "Українська",
+        "Azərbaycanca",
+        "Português (Brasil)",
+        "Türkçe",
+        "中文 (简体)",
+        "Español",
+        "Deutsch",
+        "Italiano",
+        "Français",
+        "Lietuvių",
+        "Română",
+        "Čeština",
+        "Български",
+        "Македонски",
+        "Shqip",
+        "Hrvatski",
+        "Slovenščina",
+        "한국어",
+        "日本語",
+    ];
 }
 
 export component PageAppSettings inherits VerticalLayout {
@@ -19,6 +49,7 @@ export component PageAppSettings inherits VerticalLayout {
         mainview := VerticalLayout {
             padding: 10px;
             spacing: 10px;
+
             SystemToggle {
                 text: @tr("Run in background after closing");
                 checked <=> AppSettingsPageData.run_in_background;
@@ -49,6 +80,49 @@ export component PageAppSettings inherits VerticalLayout {
                 toggled => {
                     AppSettingsPageData.set_enable_dgpu_notifications(AppSettingsPageData.enable_dgpu_notifications)
                 }
+            }
+
+            // Language selection
+            HorizontalLayout {
+                spacing: 10px;
+                alignment: start;
+                Text {
+                    vertical-alignment: center;
+                    text: @tr("Interface language");
+                    color: Palette.foreground;
+                }
+            }
+
+            SystemToggle {
+                text: @tr("Use system language");
+                checked <=> AppSettingsPageData.use_system_language;
+                toggled => {
+                    AppSettingsPageData.set_use_system_language(AppSettingsPageData.use_system_language)
+                }
+            }
+
+            if !AppSettingsPageData.use_system_language: HorizontalLayout {
+                spacing: 10px;
+                alignment: start;
+                Text {
+                    vertical-alignment: center;
+                    text: @tr("Language");
+                    color: Palette.foreground;
+                    min-width: 80px;
+                }
+                ComboBox {
+                    model: AppSettingsPageData.language_names;
+                    current-index <=> AppSettingsPageData.language_index;
+                    selected(value) => {
+                        AppSettingsPageData.set_language_index(AppSettingsPageData.language_index)
+                    }
+                }
+            }
+
+            Text {
+                color: Palette.accent-background;
+                text: @tr("Language change takes effect after restarting the app.");
+                wrap: word-wrap;
             }
 
             Text {

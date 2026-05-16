@@ -82,8 +82,7 @@ msgstr "Драйвер Asus-Armoury не загружен"
 msgctxt "no_asus_armoury_driver_2"
 msgid ""
 "For advanced features you will require a kernel with this driver added."
-msgstr ""
-"Для расширенных функций требуется ядро с поддержкой этого драйвера."
+msgstr "Для расширенных функций требуется ядро с поддержкой этого драйвера."
 
 #: rog-control-center/ui/pages/system.slint:216
 msgctxt "PageSystem"
@@ -103,8 +102,7 @@ msgstr "Звук при загрузке системы"
 #: rog-control-center/ui/pages/system.slint:248
 msgctxt "ppt_warning"
 msgid "The following settings are not applied until the toggle is enabled."
-msgstr ""
-"Следующие настройки применяются только после включения переключателя."
+msgstr "Следующие настройки применяются только после включения переключателя."
 
 #: rog-control-center/ui/pages/system.slint:253
 msgctxt "ppt_group_enabled"
@@ -171,7 +169,8 @@ msgid ""
 "during millisecond-scale load spikes."
 msgstr ""
 "Ультра-короткая продолжительность предела мощности для системного пакета. "
-"Управление максимальной мощностью во время кратковременных всплесков нагрузки."
+"Управление максимальной мощностью во время кратковременных всплесков "
+"нагрузки."
 
 #: rog-control-center/ui/pages/system.slint:329
 #: rog-control-center/ui/pages/system.slint:330
@@ -200,8 +199,8 @@ msgid ""
 "Overall system power limit for sustained operations. Controls total platform"
 " power consumption over extended periods."
 msgstr ""
-"Общий предел мощности системы для длительных операций. Управляет общим потреблением "
-"энергии платформы в течение продолжительных периодов времени"
+"Общий предел мощности системы для длительных операций. Управляет общим "
+"потреблением энергии платформы в течение продолжительных периодов времени"
 
 #: rog-control-center/ui/pages/system.slint:363
 #: rog-control-center/ui/pages/system.slint:364
@@ -215,8 +214,9 @@ msgid ""
 "Additional power allocation for GPU dynamic boost. Higher values increase "
 "GPU performance but generate more heat."
 msgstr ""
-"Дополнительное распределение мощности для динамического буста GPU. Более высокие значения "
-"увеличивают производительность GPU, но приводят к большему выделению тепла"
+"Дополнительное распределение мощности для динамического буста GPU. Более "
+"высокие значения увеличивают производительность GPU, но приводят к большему "
+"выделению тепла"
 
 #: rog-control-center/ui/pages/system.slint:380
 #: rog-control-center/ui/pages/system.slint:381
@@ -231,7 +231,8 @@ msgid ""
 "temperature below this limit."
 msgstr ""
 "Максимальный порог температуры GPU в градусах Цельсия. GPU будет "
-"ограничивать свою производительность, чтобы поддерживать температуру ниже этого предела"
+"ограничивать свою производительность, чтобы поддерживать температуру ниже "
+"этого предела"
 
 #: rog-control-center/ui/pages/system.slint:433
 msgctxt "PageSystem"

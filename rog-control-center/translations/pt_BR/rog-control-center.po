@@ -1155,3 +1155,19 @@ msgstr "EPP para "
 msgctxt "PageSystem"
 msgid " Policy"
 msgstr " Política"
+
+msgctxt "PageAppSettings"
+msgid "Interface language"
+msgstr "Idioma da interface"
+
+msgctxt "PageAppSettings"
+msgid "Use system language"
+msgstr "Usar idioma do sistema"
+
+msgctxt "PageAppSettings"
+msgid "Language"
+msgstr "Idioma"
+
+msgctxt "PageAppSettings"
+msgid "Language change takes effect after restarting the app."
+msgstr "A mudança de idioma entra em vigor após reiniciar o aplicativo."
