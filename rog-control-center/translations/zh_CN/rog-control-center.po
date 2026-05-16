@@ -1057,3 +1057,141 @@ msgstr "语言"
 msgctxt "PageAppSettings"
 msgid "Language change takes effect after restarting the app."
 msgstr "语言更改在重启应用程序后生效。"
+
+#: rog-control-center/ui/pages/system.slint:20
+msgid "LowPower"
+msgstr ""
+
+#: rog-control-center/ui/pages/system.slint:171
+msgid "Power settings"
+msgstr ""
+
+#: rog-control-center/ui/pages/system.slint:191
+msgid "Platform Profile"
+msgstr ""
+
+#: rog-control-center/ui/pages/system.slint:221
+msgid "Screenpad brightness"
+msgstr ""
+
+#: rog-control-center/ui/pages/system.slint:245
+msgid "Sync with primary"
+msgstr ""
+
+#: rog-control-center/ui/pages/system.slint:265
+msgid "Armoury settings"
+msgstr ""
+
+#: rog-control-center/ui/pages/system.slint:275
+msgid "The asus-armoury driver is not loaded"
+msgstr ""
+
+#: rog-control-center/ui/pages/system.slint:282
+msgid ""
+"For advanced features you will require a kernel with this driver added."
+msgstr ""
+
+#: rog-control-center/ui/pages/system.slint:342
+msgid "The following settings are not applied until the toggle is enabled."
+msgstr ""
+
+#: rog-control-center/ui/pages/system.slint:347
+#: rog-control-center/ui/pages/system.slint:347
+msgid "Enable Tuning"
+msgstr ""
+
+#: rog-control-center/ui/pages/system.slint:364
+#: rog-control-center/ui/pages/system.slint:364
+msgid "CPU Sustained Power Limit"
+msgstr ""
+
+#: rog-control-center/ui/pages/system.slint:366
+msgid ""
+"Long-term CPU power limit that affects sustained workload performance. "
+"Higher values may increase heat and power consumption."
+msgstr ""
+
+#: rog-control-center/ui/pages/system.slint:382
+#: rog-control-center/ui/pages/system.slint:382
+msgid "CPU Turbo Power Limit"
+msgstr ""
+
+#: rog-control-center/ui/pages/system.slint:384
+msgid ""
+"Short-term CPU power limit for boost periods. Controls maximum power during "
+"brief high-performance bursts."
+msgstr ""
+
+#: rog-control-center/ui/pages/system.slint:400
+#: rog-control-center/ui/pages/system.slint:400
+msgid "CPU Fast Burst Power Limit"
+msgstr ""
+
+#: rog-control-center/ui/pages/system.slint:402
+msgid ""
+"Ultra-short duration power limit for instantaneous CPU bursts. Affects "
+"responsiveness during sudden workload spikes."
+msgstr ""
+
+#: rog-control-center/ui/pages/system.slint:417
+#: rog-control-center/ui/pages/system.slint:417
+msgid "Fast Package Power Limit"
+msgstr ""
+
+#: rog-control-center/ui/pages/system.slint:419
+msgid ""
+"Ultra-short duration power limit for system package. Controls maximum power "
+"during millisecond-scale load spikes."
+msgstr ""
+
+#: rog-control-center/ui/pages/system.slint:435
+#: rog-control-center/ui/pages/system.slint:435
+msgid "APU Sustained Power Limit"
+msgstr ""
+
+#: rog-control-center/ui/pages/system.slint:437
+msgid ""
+"Long-term power limit for integrated graphics and CPU combined. Affects "
+"sustained performance of APU-based workloads."
+msgstr ""
+
+#: rog-control-center/ui/pages/system.slint:453
+#: rog-control-center/ui/pages/system.slint:453
+msgid "Platform Sustained Power Limit"
+msgstr ""
+
+#: rog-control-center/ui/pages/system.slint:455
+msgid ""
+"Overall system power limit for sustained operations. Controls total platform"
+" power consumption over extended periods."
+msgstr ""
+
+#: rog-control-center/ui/pages/system.slint:471
+#: rog-control-center/ui/pages/system.slint:471
+msgid "GPU Power Boost"
+msgstr ""
+
+#: rog-control-center/ui/pages/system.slint:473
+msgid ""
+"Additional power allocation for GPU dynamic boost. Higher values increase "
+"GPU performance but generate more heat."
+msgstr ""
+
+#: rog-control-center/ui/pages/system.slint:507
+#: rog-control-center/ui/pages/system.slint:507
+msgid "GPU Temperature Limit"
+msgstr ""
+
+#: rog-control-center/ui/pages/system.slint:509
+msgid ""
+"Maximum GPU temperature threshold in Celsius. GPU will throttle to maintain "
+"temperature below this limit."
+msgstr ""
+
+#: rog-control-center/ui/widgets/common.slint:125
+msgid "Are you sure you want to reset this?"
+msgstr ""
+
+#: rog-control-center/ui/types/aura_types.slint:60
+msgid "Ally"
+msgstr ""

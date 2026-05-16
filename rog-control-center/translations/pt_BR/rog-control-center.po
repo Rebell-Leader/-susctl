@@ -1171,3 +1171,15 @@ msgstr "Idioma"
 msgctxt "PageAppSettings"
 msgid "Language change takes effect after restarting the app."
 msgstr "A mudança de idioma entra em vigor após reiniciar o aplicativo."
+
+#: rog-control-center/ui/pages/system.slint:20
+msgid "LowPower"
+msgstr ""
+
+#: rog-control-center/ui/pages/system.slint:221
+msgid "Screenpad brightness"
+msgstr ""
+
+#: rog-control-center/ui/pages/system.slint:245
+msgid "Sync with primary"
+msgstr ""
