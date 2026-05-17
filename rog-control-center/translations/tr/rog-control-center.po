@@ -1,4 +1,4 @@
-
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
@@ -6,10 +6,10 @@ msgstr ""
 "PO-Revision-Date: 2024-05-11 10:20+0300\n"
 "Last-Translator: Winfried <winfriedhofmann@duck.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: tr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: tr\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
 #: rog-control-center/ui/pages/anime.slint:6
@@ -35,42 +35,42 @@ msgstr "Yüksek"
 #: rog-control-center/ui/pages/anime.slint:23
 msgctxt "AnimePageData"
 msgid "Glitch Construction"
-msgstr ""
+msgstr "Bozuk Yapı"
 
 #: rog-control-center/ui/pages/anime.slint:23
 msgctxt "AnimePageData"
 msgid "Static Emergence"
-msgstr ""
+msgstr "Statik Belirme"
 
 #: rog-control-center/ui/pages/anime.slint:25
 msgctxt "AnimePageData"
 msgid "Binary Banner Scroll"
-msgstr ""
+msgstr "İkili Bayrak Kaydırma"
 
 #: rog-control-center/ui/pages/anime.slint:25
 msgctxt "AnimePageData"
 msgid "Rog Logo Glitch"
-msgstr ""
+msgstr "Rog Logo Bozukluğu"
 
 #: rog-control-center/ui/pages/anime.slint:27
 msgctxt "AnimePageData"
 msgid "Banner Swipe"
-msgstr ""
+msgstr "Bayrak Kaydırma"
 
 #: rog-control-center/ui/pages/anime.slint:27
 msgctxt "AnimePageData"
 msgid "Starfield"
-msgstr ""
+msgstr "Yıldız Alanı"
 
 #: rog-control-center/ui/pages/anime.slint:29
 msgctxt "AnimePageData"
 msgid "Glitch Out"
-msgstr ""
+msgstr "Bozuk Çıkış"
 
 #: rog-control-center/ui/pages/anime.slint:29
 msgctxt "AnimePageData"
 msgid "See Ya"
-msgstr ""
+msgstr "Görüşürüz"
 
 #: rog-control-center/ui/pages/anime.slint:50
 msgctxt "Anime Brightness"
@@ -82,7 +82,8 @@ msgctxt "PageAnime"
 msgid "Enable display"
 msgstr "Görüntüyü etkinleştir"
 
-#: rog-control-center/ui/pages/anime.slint:74 rog-control-center/ui/pages/anime.slint:97
+#: rog-control-center/ui/pages/anime.slint:74
+#: rog-control-center/ui/pages/anime.slint:97
 msgctxt "PageAnime"
 msgid "Advanced"
 msgstr "Gelişmiş"
@@ -100,12 +101,12 @@ msgstr "Hangi yerleşik animasyonların oynatılacağını ayarlayın"
 #: rog-control-center/ui/pages/anime.slint:150
 msgctxt "Anime built-in selection"
 msgid "Boot Animation"
-msgstr ""
+msgstr "Önyükleme Animasyonu"
 
 #: rog-control-center/ui/pages/anime.slint:160
 msgctxt "Anime built-in selection"
 msgid "Running Animation"
-msgstr ""
+msgstr "Çalışma Animasyonu"
 
 #: rog-control-center/ui/pages/anime.slint:170
 msgctxt "Anime built-in selection"
@@ -160,7 +161,7 @@ msgstr "dGPU bildirimlerini etkinleştir"
 #: rog-control-center/ui/pages/fans.slint:27
 msgctxt "FanTab"
 msgid "This fan is not avilable on this machine"
-msgstr ""
+msgstr "Bu fan bu makinede mevcut değil"
 
 #: rog-control-center/ui/pages/fans.slint:35
 msgctxt "FanTab"
@@ -180,27 +181,33 @@ msgstr "Vazgeç"
 #: rog-control-center/ui/pages/fans.slint:60
 msgctxt "FanTab"
 msgid "Factory Default (all fans)"
-msgstr ""
+msgstr "Fabrika Varsayılanı (tüm fanlar)"
 
 #: rog-control-center/ui/pages/fans.slint:73
 msgctxt "PageFans"
 msgid "Balanced"
 msgstr "Dengeli"
 
-#: rog-control-center/ui/pages/fans.slint:76 rog-control-center/ui/pages/fans.slint:135 rog-control-center/ui/pages/fans.slint:194
+#: rog-control-center/ui/pages/fans.slint:76
+#: rog-control-center/ui/pages/fans.slint:135
+#: rog-control-center/ui/pages/fans.slint:194
 msgctxt "PageFans"
 msgid "CPU"
-msgstr ""
+msgstr "CPU"
 
-#: rog-control-center/ui/pages/fans.slint:94 rog-control-center/ui/pages/fans.slint:153 rog-control-center/ui/pages/fans.slint:212
+#: rog-control-center/ui/pages/fans.slint:94
+#: rog-control-center/ui/pages/fans.slint:153
+#: rog-control-center/ui/pages/fans.slint:212
 msgctxt "PageFans"
 msgid "Mid"
-msgstr ""
+msgstr "Orta"
 
-#: rog-control-center/ui/pages/fans.slint:112 rog-control-center/ui/pages/fans.slint:171 rog-control-center/ui/pages/fans.slint:230
+#: rog-control-center/ui/pages/fans.slint:112
+#: rog-control-center/ui/pages/fans.slint:171
+#: rog-control-center/ui/pages/fans.slint:230
 msgctxt "PageFans"
 msgid "GPU"
-msgstr ""
+msgstr "GPU"
 
 #: rog-control-center/ui/pages/fans.slint:132
 msgctxt "PageFans"
@@ -217,7 +224,8 @@ msgctxt "SystemPageData"
 msgid "Balanced"
 msgstr "Dengeli"
 
-#: rog-control-center/ui/pages/system.slint:26 rog-control-center/ui/pages/system.slint:30
+#: rog-control-center/ui/pages/system.slint:26
+#: rog-control-center/ui/pages/system.slint:30
 msgctxt "SystemPageData"
 msgid "Performance"
 msgstr "Perfomans"
@@ -235,17 +243,17 @@ msgstr "Varsayınal"
 #: rog-control-center/ui/pages/system.slint:31
 msgctxt "SystemPageData"
 msgid "BalancePerformance"
-msgstr ""
+msgstr "Dengeli Performans"
 
 #: rog-control-center/ui/pages/system.slint:32
 msgctxt "SystemPageData"
 msgid "BalancePower"
-msgstr ""
+msgstr "Dengeli Güç"
 
 #: rog-control-center/ui/pages/system.slint:33
 msgctxt "SystemPageData"
 msgid "Power"
-msgstr ""
+msgstr "Güç"
 
 #: rog-control-center/ui/pages/system.slint:106
 msgctxt "PageSystem"
@@ -270,17 +278,17 @@ msgstr "Gelişmiş"
 #: rog-control-center/ui/pages/system.slint:145
 msgctxt "PageSystem"
 msgid "Panel Overdrive"
-msgstr ""
+msgstr "Panel Aşırı Sürüş"
 
 #: rog-control-center/ui/pages/system.slint:153
 msgctxt "PageSystem"
 msgid "MiniLED Mode"
-msgstr ""
+msgstr "MiniLED Modu"
 
 #: rog-control-center/ui/pages/system.slint:161
 msgctxt "PageSystem"
 msgid "POST boot sound"
-msgstr ""
+msgstr "POST önyükleme sesi"
 
 #: rog-control-center/ui/pages/system.slint:179
 msgctxt "PageSystem"
@@ -290,37 +298,37 @@ msgstr "Sistem Perfomans Ayarları"
 #: rog-control-center/ui/pages/system.slint:184
 msgctxt "ppt_pl1_spl"
 msgid "ppt_pl1_spl"
-msgstr ""
+msgstr "PL1, kalıcı güç sınırı"
 
 #: rog-control-center/ui/pages/system.slint:194
 msgctxt "ppt_pl2_sppt"
 msgid "ppt_pl2_sppt"
-msgstr ""
+msgstr "PL2, turbo güç sınırı"
 
 #: rog-control-center/ui/pages/system.slint:204
 msgctxt "ppt_fppt"
 msgid "ppt_fppt"
-msgstr ""
+msgstr "FPPT, hızlı güç sınırı"
 
 #: rog-control-center/ui/pages/system.slint:214
 msgctxt "ppt_apu_sppt"
 msgid "ppt_apu_sppt"
-msgstr ""
+msgstr "SPPT, APU yavaş güç sınırı"
 
 #: rog-control-center/ui/pages/system.slint:224
 msgctxt "ppt_platform_sppt"
 msgid "ppt_platform_sppt"
-msgstr ""
+msgstr "Yavaş platform güç sınırı"
 
 #: rog-control-center/ui/pages/system.slint:234
 msgctxt "nv_dynamic_boost"
 msgid "nv_dynamic_boost"
-msgstr ""
+msgstr "GPU dinamik hız artırma"
 
 #: rog-control-center/ui/pages/system.slint:244
 msgctxt "nv_temp_target"
 msgid "nv_temp_target"
-msgstr ""
+msgstr "GPU sıcaklık hedefi"
 
 #: rog-control-center/ui/pages/system.slint:290
 msgctxt "PageSystem"
@@ -385,12 +393,12 @@ msgstr "Renk 2"
 #: rog-control-center/ui/pages/aura.slint:114
 msgctxt "PageAura"
 msgid "Zone"
-msgstr ""
+msgstr "Bölge"
 
 #: rog-control-center/ui/pages/aura.slint:137
 msgctxt "PageAura"
 msgid "Direction"
-msgstr ""
+msgstr "Yön"
 
 #: rog-control-center/ui/pages/aura.slint:159
 msgctxt "PageAura"
@@ -405,27 +413,27 @@ msgstr "Güç Ayarları"
 #: rog-control-center/ui/widgets/aura_power.slint:32
 msgctxt "AuraPowerGroup"
 msgid "Boot"
-msgstr ""
+msgstr "Önyükleme"
 
 #: rog-control-center/ui/widgets/aura_power.slint:42
 msgctxt "AuraPowerGroup"
 msgid "Awake"
-msgstr ""
+msgstr "Uyanık"
 
 #: rog-control-center/ui/widgets/aura_power.slint:52
 msgctxt "AuraPowerGroup"
 msgid "Sleep"
-msgstr ""
+msgstr "Uyku"
 
 #: rog-control-center/ui/widgets/aura_power.slint:62
 msgctxt "AuraPowerGroup"
 msgid "Shutdown"
-msgstr ""
+msgstr "Kapatma"
 
 #: rog-control-center/ui/types/aura_types.slint:45
 msgctxt "Aura power zone"
 msgid "Logo"
-msgstr ""
+msgstr "Logo"
 
 #: rog-control-center/ui/types/aura_types.slint:46
 msgctxt "Aura power zone"
@@ -435,17 +443,17 @@ msgstr "Klavye"
 #: rog-control-center/ui/types/aura_types.slint:47
 msgctxt "Aura power zone"
 msgid "Lightbar"
-msgstr ""
+msgstr "Işık Çubuğu"
 
 #: rog-control-center/ui/types/aura_types.slint:48
 msgctxt "Aura power zone"
 msgid "Lid"
-msgstr ""
+msgstr "Kapak"
 
 #: rog-control-center/ui/types/aura_types.slint:49
 msgctxt "Aura power zone"
 msgid "Rear Glow"
-msgstr ""
+msgstr "Arka Işıltı"
 
 #: rog-control-center/ui/types/aura_types.slint:50
 msgctxt "Aura power zone"
@@ -472,17 +480,20 @@ msgctxt "Aura brightness"
 msgid "High"
 msgstr "Yüksek"
 
-#: rog-control-center/ui/types/aura_types.slint:61 rog-control-center/ui/types/aura_types.slint:76
+#: rog-control-center/ui/types/aura_types.slint:61
+#: rog-control-center/ui/types/aura_types.slint:76
 msgctxt "Basic aura mode"
 msgid "Static"
 msgstr "Sabit"
 
-#: rog-control-center/ui/types/aura_types.slint:62 rog-control-center/ui/types/aura_types.slint:77
+#: rog-control-center/ui/types/aura_types.slint:62
+#: rog-control-center/ui/types/aura_types.slint:77
 msgctxt "Basic aura mode"
 msgid "Breathe"
 msgstr "Nefes Alma"
 
-#: rog-control-center/ui/types/aura_types.slint:63 rog-control-center/ui/types/aura_types.slint:78
+#: rog-control-center/ui/types/aura_types.slint:63
+#: rog-control-center/ui/types/aura_types.slint:78
 msgctxt "Basic aura mode"
 msgid "Strobe"
 msgstr "Flaş"
@@ -495,47 +506,47 @@ msgstr "Gökkuşağı"
 #: rog-control-center/ui/types/aura_types.slint:65
 msgctxt "Basic aura mode"
 msgid "Star"
-msgstr ""
+msgstr "Yıldız"
 
 #: rog-control-center/ui/types/aura_types.slint:66
 msgctxt "Basic aura mode"
 msgid "Rain"
-msgstr ""
+msgstr "Yağmur"
 
 #: rog-control-center/ui/types/aura_types.slint:67
 msgctxt "Basic aura mode"
 msgid "Highlight"
-msgstr ""
+msgstr "Vurgu"
 
 #: rog-control-center/ui/types/aura_types.slint:68
 msgctxt "Basic aura mode"
 msgid "Laser"
-msgstr ""
+msgstr "Lazer"
 
 #: rog-control-center/ui/types/aura_types.slint:69
 msgctxt "Basic aura mode"
 msgid "Ripple"
-msgstr ""
+msgstr "Dalgalanma"
 
 #: rog-control-center/ui/types/aura_types.slint:70
 msgctxt "Basic aura mode"
 msgid "Nothing"
-msgstr ""
+msgstr "Hiçbiri"
 
 #: rog-control-center/ui/types/aura_types.slint:71
 msgctxt "Basic aura mode"
 msgid "Pulse"
-msgstr ""
+msgstr "Nabız"
 
 #: rog-control-center/ui/types/aura_types.slint:72
 msgctxt "Basic aura mode"
 msgid "Comet"
-msgstr ""
+msgstr "Kuyruklu Yıldız"
 
 #: rog-control-center/ui/types/aura_types.slint:73
 msgctxt "Basic aura mode"
 msgid "Flash"
-msgstr ""
+msgstr "Flaş"
 
 #: rog-control-center/ui/types/aura_types.slint:85
 msgctxt "Aura zone"
@@ -545,37 +556,37 @@ msgstr "Hiçbiri"
 #: rog-control-center/ui/types/aura_types.slint:86
 msgctxt "Aura zone"
 msgid "Key1"
-msgstr ""
+msgstr "Tuş1"
 
 #: rog-control-center/ui/types/aura_types.slint:87
 msgctxt "Aura zone"
 msgid "Key2"
-msgstr ""
+msgstr "Tuş2"
 
 #: rog-control-center/ui/types/aura_types.slint:88
 msgctxt "Aura zone"
 msgid "Key3"
-msgstr ""
+msgstr "Tuş3"
 
 #: rog-control-center/ui/types/aura_types.slint:89
 msgctxt "Aura zone"
 msgid "Key4"
-msgstr ""
+msgstr "Tuş4"
 
 #: rog-control-center/ui/types/aura_types.slint:90
 msgctxt "Aura zone"
 msgid "Logo"
-msgstr ""
+msgstr "Logo"
 
 #: rog-control-center/ui/types/aura_types.slint:91
 msgctxt "Aura zone"
 msgid "Lightbar Left"
-msgstr ""
+msgstr "Sol Işık Çubuğu"
 
 #: rog-control-center/ui/types/aura_types.slint:92
 msgctxt "Aura zone"
 msgid "Lightbar Right"
-msgstr ""
+msgstr "Sağ Işık Çubuğu"
 
 #: rog-control-center/ui/types/aura_types.slint:96
 msgctxt "Aura direction"
@@ -615,7 +626,7 @@ msgstr "Yüksek"
 #: rog-control-center/ui/main_window.slint:50
 msgctxt "MainWindow"
 msgid "ROG"
-msgstr ""
+msgstr "ROG"
 
 #: rog-control-center/ui/main_window.slint:52
 msgctxt "Menu1"
@@ -630,12 +641,12 @@ msgstr "Klavye Rengi"
 #: rog-control-center/ui/main_window.slint:54
 msgctxt "Menu3"
 msgid "AniMe Matrix"
-msgstr ""
+msgstr "AniMe Matrix"
 
 #: rog-control-center/ui/main_window.slint:55
 msgctxt "Menu4"
 msgid "Fan Curves"
-msgstr ""
+msgstr "Fan Eğrileri"
 
 #: rog-control-center/ui/main_window.slint:56
 msgctxt "Menu5"
@@ -652,3 +663,502 @@ msgctxt "MainWindow"
 msgid "Quit"
 msgstr "Çık"
 
+#: rog-control-center/ui/main_window.slint:81
+msgctxt "Menu4"
+msgid "Slash LED"
+msgstr "Slash LED"
+
+#: rog-control-center/ui/main_window.slint:82
+msgctxt "Menu5"
+msgid "Fan Curves"
+msgstr "Fan Eğrileri"
+
+#: rog-control-center/ui/main_window.slint:83
+msgctxt "Menu6"
+msgid "GPU Configuration"
+msgstr "GPU Yapılandırması"
+
+#: rog-control-center/ui/main_window.slint:84
+msgctxt "Menu7"
+msgid "App Settings"
+msgstr "Uygulama Ayarları"
+
+#: rog-control-center/ui/main_window.slint:85
+msgctxt "Menu8"
+msgid "About"
+msgstr "Hakkında"
+
+#: rog-control-center/ui/pages/gpu.slint:11
+msgctxt "GPUPageData"
+msgid "Integrated"
+msgstr "Tümleşik"
+
+#: rog-control-center/ui/pages/gpu.slint:11
+msgctxt "GPUPageData"
+msgid "Hybrid"
+msgstr "Hibrit"
+
+#: rog-control-center/ui/pages/gpu.slint:35
+msgctxt "PageGPU"
+msgid "Internal/Discrete GPU"
+msgstr "Dahili/Ayrık GPU"
+
+#: rog-control-center/ui/pages/gpu.slint:47
+msgctxt "PageGPU"
+msgid ""
+"Note: Changes take effect after a reboot. The dropdown always shows the "
+"current mode."
+msgstr ""
+"Not: Değişiklikler yeniden başlatmadan sonra geçerli olur. Açılır menü her "
+"zaman mevcut modu gösterir."
+
+#: rog-control-center/ui/pages/gpu.slint:54
+msgctxt "PageGPU"
+msgid "GPU mode"
+msgstr "GPU modu"
+
+#: rog-control-center/ui/pages/slash.slint:12
+msgctxt "Slash interval"
+msgid "0"
+msgstr "0"
+
+#: rog-control-center/ui/pages/slash.slint:13
+msgctxt "Slash interval"
+msgid "1"
+msgstr "1"
+
+#: rog-control-center/ui/pages/slash.slint:14
+msgctxt "Slash interval"
+msgid "2"
+msgstr "2"
+
+#: rog-control-center/ui/pages/slash.slint:15
+msgctxt "Slash interval"
+msgid "3"
+msgstr "3"
+
+#: rog-control-center/ui/pages/slash.slint:16
+msgctxt "Slash interval"
+msgid "4"
+msgstr "4"
+
+#: rog-control-center/ui/pages/slash.slint:17
+msgctxt "Slash interval"
+msgid "5"
+msgstr "5"
+
+#: rog-control-center/ui/pages/slash.slint:23
+msgctxt "Slash mode"
+msgid "Static"
+msgstr "Statik"
+
+#: rog-control-center/ui/pages/slash.slint:24
+msgctxt "Slash mode"
+msgid "Bounce"
+msgstr "Sekme"
+
+#: rog-control-center/ui/pages/slash.slint:25
+msgctxt "Slash mode"
+msgid "Slash"
+msgstr "Slash"
+
+#: rog-control-center/ui/pages/slash.slint:26
+msgctxt "Slash mode"
+msgid "Loading"
+msgstr "Yükleniyor"
+
+#: rog-control-center/ui/pages/slash.slint:27
+msgctxt "Slash mode"
+msgid "BitStream"
+msgstr "Bit Akışı"
+
+#: rog-control-center/ui/pages/slash.slint:28
+msgctxt "Slash mode"
+msgid "Transmission"
+msgstr "İletim"
+
+#: rog-control-center/ui/pages/slash.slint:29
+msgctxt "Slash mode"
+msgid "Flow"
+msgstr "Akış"
+
+#: rog-control-center/ui/pages/slash.slint:30
+msgctxt "Slash mode"
+msgid "Flux"
+msgstr "Dalgalanma"
+
+#: rog-control-center/ui/pages/slash.slint:31
+msgctxt "Slash mode"
+msgid "Phantom"
+msgstr "Hayalet"
+
+#: rog-control-center/ui/pages/slash.slint:32
+msgctxt "Slash mode"
+msgid "Spectrum"
+msgstr "Spektrum"
+
+#: rog-control-center/ui/pages/slash.slint:33
+msgctxt "Slash mode"
+msgid "Hazard"
+msgstr "Tehlike"
+
+#: rog-control-center/ui/pages/slash.slint:34
+msgctxt "Slash mode"
+msgid "Interfacing"
+msgstr "Arayüz"
+
+#: rog-control-center/ui/pages/slash.slint:35
+msgctxt "Slash mode"
+msgid "Ramp"
+msgstr "Rampa"
+
+#: rog-control-center/ui/pages/slash.slint:36
+msgctxt "Slash mode"
+msgid "GameOver"
+msgstr "Oyun Bitti"
+
+#: rog-control-center/ui/pages/slash.slint:37
+msgctxt "Slash mode"
+msgid "Start"
+msgstr "Başlangıç"
+
+#: rog-control-center/ui/pages/slash.slint:38
+msgctxt "Slash mode"
+msgid "Buzzer"
+msgstr "Zil"
+
+#: rog-control-center/ui/pages/slash.slint:41
+msgctxt "Slash mode desc"
+msgid "Steady glow, no animation"
+msgstr "Sabit parlaklık, animasyon yok"
+
+#: rog-control-center/ui/pages/slash.slint:42
+msgctxt "Slash mode desc"
+msgid "Light bounces back and forth along the strip"
+msgstr "Işık şerit boyunca ileri geri sekiyor"
+
+#: rog-control-center/ui/pages/slash.slint:43
+msgctxt "Slash mode desc"
+msgid "Diagonal sweep wave across the strip"
+msgstr "Şerit boyunca çapraz süpürme dalgası"
+
+#: rog-control-center/ui/pages/slash.slint:44
+msgctxt "Slash mode desc"
+msgid "Progress bar that slowly fills the strip"
+msgstr "Şeridi yavaşça dolduran ilerleme çubuğu"
+
+#: rog-control-center/ui/pages/slash.slint:45
+msgctxt "Slash mode desc"
+msgid "Random pixel flashes like a data stream"
+msgstr "Veri akışı gibi rastgele piksel yanıp sönmeleri"
+
+#: rog-control-center/ui/pages/slash.slint:46
+msgctxt "Slash mode desc"
+msgid "Pulses travel along the strip like data packets"
+msgstr "Darbeler veri paketleri gibi şerit boyunca ilerliyor"
+
+#: rog-control-center/ui/pages/slash.slint:47
+msgctxt "Slash mode desc"
+msgid "Smooth light flow from one end to the other"
+msgstr "Bir uçtan diğerine düzgün ışık akışı"
+
+#: rog-control-center/ui/pages/slash.slint:48
+msgctxt "Slash mode desc"
+msgid "Wave-like pulsing rhythm"
+msgstr "Dalga benzeri nabız ritmi"
+
+#: rog-control-center/ui/pages/slash.slint:49
+msgctxt "Slash mode desc"
+msgid "Ghostly fade in and out"
+msgstr "Hayalet gibi belirip kayboluyor"
+
+#: rog-control-center/ui/pages/slash.slint:50
+msgctxt "Slash mode desc"
+msgid "Cycles through the full color spectrum"
+msgstr "Tam renk spektrumunu dolaşıyor"
+
+#: rog-control-center/ui/pages/slash.slint:51
+msgctxt "Slash mode desc"
+msgid "Urgent warning-style flashing"
+msgstr "Acil uyarı tarzında yanıp sönme"
+
+#: rog-control-center/ui/pages/slash.slint:52
+msgctxt "Slash mode desc"
+msgid "Connection handshake effect"
+msgstr "Bağlantı el sıkışma efekti"
+
+#: rog-control-center/ui/pages/slash.slint:53
+msgctxt "Slash mode desc"
+msgid "Brightness ramps up from dark to full"
+msgstr "Parlaklık karanlıktan maksimuma yükseliyor"
+
+#: rog-control-center/ui/pages/slash.slint:54
+msgctxt "Slash mode desc"
+msgid "Game over — dramatic fade out"
+msgstr "Oyun bitti — dramatik kararma"
+
+#: rog-control-center/ui/pages/slash.slint:55
+msgctxt "Slash mode desc"
+msgid "Startup burst, energetic ignition"
+msgstr "Başlangıç patlaması, enerjik ateşleme"
+
+#: rog-control-center/ui/pages/slash.slint:56
+msgctxt "Slash mode desc"
+msgid "Rapid buzzer-like strobe flash"
+msgstr "Zil gibi hızlı stroboskopik flaş"
+
+#: rog-control-center/ui/pages/slash.slint:84
+msgctxt "PageSlash"
+msgid "Enable Slash LED"
+msgstr "Slash LED'i Etkinleştir"
+
+#: rog-control-center/ui/pages/slash.slint:94
+msgctxt "PageSlash"
+msgid "Animation"
+msgstr "Animasyon"
+
+#: rog-control-center/ui/pages/slash.slint:117
+msgctxt "PageSlash"
+msgid "Interval"
+msgstr "Aralık"
+
+#: rog-control-center/ui/pages/slash.slint:133
+msgctxt "PageSlash"
+msgid "Brightness"
+msgstr "Parlaklık"
+
+#: rog-control-center/ui/pages/slash.slint:150
+msgctxt "PageSlash"
+msgid "Show LED on..."
+msgstr "LED'i şunlarda göster..."
+
+#: rog-control-center/ui/pages/slash.slint:154
+msgctxt "PageSlash"
+msgid "Boot"
+msgstr "Önyükleme"
+
+#: rog-control-center/ui/pages/slash.slint:159
+msgctxt "PageSlash"
+msgid "Shutdown"
+msgstr "Kapatma"
+
+#: rog-control-center/ui/pages/slash.slint:164
+msgctxt "PageSlash"
+msgid "Sleep"
+msgstr "Uyku"
+
+#: rog-control-center/ui/pages/slash.slint:169
+msgctxt "PageSlash"
+msgid "Battery"
+msgstr "Pil"
+
+#: rog-control-center/ui/pages/slash.slint:174
+msgctxt "PageSlash"
+msgid "Low battery warning"
+msgstr "Düşük pil uyarısı"
+
+#: rog-control-center/ui/pages/slash.slint:179
+msgctxt "PageSlash"
+msgid "Lid closed (show while laptop is folded shut)"
+msgstr "Kapak kapalı (dizüstü bilgisayar kapalıyken göster)"
+
+#: rog-control-center/ui/pages/system.slint:318
+msgctxt "PageSystem"
+msgid "Screen Auto Brightness"
+msgstr "Ekran Otomatik Parlaklığı"
+
+#: rog-control-center/ui/pages/system.slint:326
+msgctxt "PageSystem"
+msgid "MCU Powersave"
+msgstr "MCU Güç Tasarrufu"
+
+#: rog-control-center/ui/pages/system.slint:489
+#: rog-control-center/ui/pages/system.slint:489
+msgctxt "nv_tgp"
+msgid "GPU TGP"
+msgstr "GPU TGP"
+
+#: rog-control-center/ui/pages/system.slint:491
+msgctxt "nv_tgp_help"
+msgid ""
+"Total graphics power limit for the dedicated NVIDIA GPU. Higher values can "
+"improve performance at the cost of additional heat and power draw."
+msgstr ""
+"Ayrılmış NVIDIA GPU için toplam grafik güç sınırı. Daha yüksek değerler ek "
+"ısı ve güç tüketimi pahasına performansı artırabilir."
+
+#: rog-control-center/ui/pages/system.slint:595
+msgctxt "PageSystem"
+msgid "EPP for "
+msgstr "EPP: "
+
+#: rog-control-center/ui/pages/system.slint:595
+msgctxt "PageSystem"
+msgid " Policy"
+msgstr " Politikası"
+
+msgctxt "PageAppSettings"
+msgid "Interface language"
+msgstr "Arayüz dili"
+
+msgctxt "PageAppSettings"
+msgid "Use system language"
+msgstr "Sistem dilini kullan"
+
+msgctxt "PageAppSettings"
+msgid "Language"
+msgstr "Dil"
+
+msgctxt "PageAppSettings"
+msgid "Language change takes effect after restarting the app."
+msgstr "Dil değişikliği uygulamayı yeniden başlattıktan sonra geçerli olur."
+
+#: rog-control-center/ui/main_window.slint:94
+msgid "Quit App"
+msgstr ""
+
+#: rog-control-center/ui/pages/aura.slint:304
+msgid "Power Zones"
+msgstr ""
+
+#: rog-control-center/ui/pages/system.slint:20
+msgid "LowPower"
+msgstr ""
+
+#: rog-control-center/ui/pages/system.slint:171
+msgid "Power settings"
+msgstr ""
+
+#: rog-control-center/ui/pages/system.slint:191
+msgid "Platform Profile"
+msgstr ""
+
+#: rog-control-center/ui/pages/system.slint:221
+msgid "Screenpad brightness"
+msgstr ""
+
+#: rog-control-center/ui/pages/system.slint:245
+msgid "Sync with primary"
+msgstr ""
+
+#: rog-control-center/ui/pages/system.slint:265
+msgid "Armoury settings"
+msgstr ""
+
+#: rog-control-center/ui/pages/system.slint:275
+msgid "The asus-armoury driver is not loaded"
+msgstr ""
+
+#: rog-control-center/ui/pages/system.slint:282
+msgid ""
+"For advanced features you will require a kernel with this driver added."
+msgstr ""
+
+#: rog-control-center/ui/pages/system.slint:342
+msgid "The following settings are not applied until the toggle is enabled."
+msgstr ""
+
+#: rog-control-center/ui/pages/system.slint:347
+#: rog-control-center/ui/pages/system.slint:347
+msgid "Enable Tuning"
+msgstr ""
+
+#: rog-control-center/ui/pages/system.slint:364
+#: rog-control-center/ui/pages/system.slint:364
+msgid "CPU Sustained Power Limit"
+msgstr ""
+
+#: rog-control-center/ui/pages/system.slint:366
+msgid ""
+"Long-term CPU power limit that affects sustained workload performance. "
+"Higher values may increase heat and power consumption."
+msgstr ""
+
+#: rog-control-center/ui/pages/system.slint:382
+#: rog-control-center/ui/pages/system.slint:382
+msgid "CPU Turbo Power Limit"
+msgstr ""
+
+#: rog-control-center/ui/pages/system.slint:384
+msgid ""
+"Short-term CPU power limit for boost periods. Controls maximum power during "
+"brief high-performance bursts."
+msgstr ""
+
+#: rog-control-center/ui/pages/system.slint:400
+#: rog-control-center/ui/pages/system.slint:400
+msgid "CPU Fast Burst Power Limit"
+msgstr ""
+
+#: rog-control-center/ui/pages/system.slint:402
+msgid ""
+"Ultra-short duration power limit for instantaneous CPU bursts. Affects "
+"responsiveness during sudden workload spikes."
+msgstr ""
+
+#: rog-control-center/ui/pages/system.slint:417
+#: rog-control-center/ui/pages/system.slint:417
+msgid "Fast Package Power Limit"
+msgstr ""
+
+#: rog-control-center/ui/pages/system.slint:419
+msgid ""
+"Ultra-short duration power limit for system package. Controls maximum power "
+"during millisecond-scale load spikes."
+msgstr ""
+
+#: rog-control-center/ui/pages/system.slint:435
+#: rog-control-center/ui/pages/system.slint:435
+msgid "APU Sustained Power Limit"
+msgstr ""
+
+#: rog-control-center/ui/pages/system.slint:437
+msgid ""
+"Long-term power limit for integrated graphics and CPU combined. Affects "
+"sustained performance of APU-based workloads."
+msgstr ""
+
+#: rog-control-center/ui/pages/system.slint:453
+#: rog-control-center/ui/pages/system.slint:453
+msgid "Platform Sustained Power Limit"
+msgstr ""
+
+#: rog-control-center/ui/pages/system.slint:455
+msgid ""
+"Overall system power limit for sustained operations. Controls total platform"
+" power consumption over extended periods."
+msgstr ""
+
+#: rog-control-center/ui/pages/system.slint:471
+#: rog-control-center/ui/pages/system.slint:471
+msgid "GPU Power Boost"
+msgstr ""
+
+#: rog-control-center/ui/pages/system.slint:473
+msgid ""
+"Additional power allocation for GPU dynamic boost. Higher values increase "
+"GPU performance but generate more heat."
+msgstr ""
+
+#: rog-control-center/ui/pages/system.slint:507
+#: rog-control-center/ui/pages/system.slint:507
+msgid "GPU Temperature Limit"
+msgstr ""
+
+#: rog-control-center/ui/pages/system.slint:509
+msgid ""
+"Maximum GPU temperature threshold in Celsius. GPU will throttle to maintain "
+"temperature below this limit."
+msgstr ""
+
+#: rog-control-center/ui/widgets/aura_power.slint:100
+msgid "Zone Selection"
+msgstr ""
+
+#: rog-control-center/ui/widgets/common.slint:125
+msgid "Are you sure you want to reset this?"
+msgstr ""
+
+#: rog-control-center/ui/types/aura_types.slint:60
+msgid "Ally"
+msgstr ""

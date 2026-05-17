@@ -184,6 +184,15 @@ async fn main() -> Result<()> {
         }
     }
 
+    // Apply language override from config before init_translations.
+    // Only set LANGUAGE (gettext-specific), not LANG — setting LANG to an uninstalled locale
+    // causes setlocale(LC_ALL, "") to return "C" which makes gettext ignore LANGUAGE entirely.
+    if let Ok(lock) = config.lock() {
+        if !lock.language.is_empty() {
+            std::env::set_var("LANGUAGE", &lock.language);
+        }
+    }
+
     if std::env::var("RUST_TRANSLATIONS").is_ok() {
         // don't care about content
         log::debug!("---- Using local-dir translations");

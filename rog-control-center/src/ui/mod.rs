@@ -2,6 +2,7 @@ pub mod setup_anime;
 pub mod setup_aura;
 pub mod setup_fans;
 pub mod setup_gpu;
+pub mod setup_slash;
 pub mod setup_system;
 
 use std::sync::atomic::{AtomicU64, Ordering};
@@ -19,6 +20,7 @@ use crate::config::Config;
 use crate::ui::setup_anime::setup_anime_page;
 use crate::ui::setup_aura::setup_aura_page;
 use crate::ui::setup_fans::setup_fan_curve_page;
+use crate::ui::setup_slash::setup_slash_page;
 use crate::ui::setup_system::{setup_system_page, setup_system_page_callbacks};
 use crate::{AppSettingsPageData, MainWindow};
 
@@ -142,6 +144,7 @@ pub fn setup_window(
             available.contains(&"xyz.ljones.Platform".to_string()),
             available.contains(&"xyz.ljones.Aura".to_string()),
             available.contains(&"xyz.ljones.Anime".to_string()),
+            available.contains(&"xyz.ljones.Slash".to_string()),
             available.contains(&"xyz.ljones.FanCurves".to_string()),
             true, // GPU Configuration
             true, // App Settings
@@ -164,6 +167,9 @@ pub fn setup_window(
     }
     if available.contains(&"xyz.ljones.Anime".to_string()) {
         setup_anime_page(&ui, config.clone());
+    }
+    if available.contains(&"xyz.ljones.Slash".to_string()) {
+        setup_slash_page(&ui, config.clone());
     }
     if available.contains(&"xyz.ljones.FanCurves".to_string()) {
         setup_fan_curve_page(&ui, config.clone());
@@ -206,10 +212,42 @@ pub fn setup_app_settings_page(ui: &MainWindow, config: Arc<Mutex<Config>>) {
         }
     });
 
+    // Language codes matching the order in app_settings.slint language_names
+    const LANG_CODES: &[&str] = &[
+        "en", "uk_UA", "az", "pt_BR", "tr", "zh_CN",
+        "es", "de", "it", "fr", "lt", "ro", "cs",
+        "bg", "mk", "sq", "hr", "sl", "ko", "ja",
+    ];
+
+    let config_copy = config.clone();
+    global.on_set_use_system_language(move |system| {
+        if let Ok(mut lock) = config_copy.try_lock() {
+            if system {
+                lock.language = String::new();
+            }
+            lock.write();
+        }
+    });
+    let config_copy = config.clone();
+    global.on_set_language_index(move |idx| {
+        if let Ok(mut lock) = config_copy.try_lock() {
+            let code = LANG_CODES.get(idx as usize).unwrap_or(&"en");
+            lock.language = code.to_string();
+            lock.write();
+        }
+    });
+
     if let Ok(lock) = config.try_lock() {
         global.set_run_in_background(lock.run_in_background);
         global.set_startup_in_background(lock.startup_in_background);
         global.set_enable_tray_icon(lock.enable_tray_icon);
         global.set_enable_dgpu_notifications(lock.notifications.enabled);
+
+        let use_system = lock.language.is_empty();
+        global.set_use_system_language(use_system);
+        if !use_system {
+            let idx = LANG_CODES.iter().position(|&c| c == lock.language.as_str()).unwrap_or(0);
+            global.set_language_index(idx as i32);
+        }
     }
 }
