@@ -54,6 +54,14 @@ export component PageAura inherits Rectangle {
                 }
             }
 
+            if AuraPageData.fn_lock_available: SystemToggle {
+                text: @tr("Fn Lock (F1–F12 primary)");
+                checked <=> AuraPageData.fn_lock;
+                toggled(v) => {
+                    AuraPageData.cb_fn_lock(v)
+                }
+            }
+
             RogItem {
                 min-height: 220px;
                 max-height: 400px;

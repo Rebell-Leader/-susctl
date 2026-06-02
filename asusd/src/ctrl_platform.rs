@@ -355,6 +355,9 @@ impl CtrlPlatform {
         );
 
         platform_name!(platform_profile, Properties::ThrottlePolicy);
+        if self.platform.has_fnlock_status() {
+            supported.push(Properties::FnLockStatus.to_owned());
+        }
 
         supported
     }
@@ -423,6 +426,34 @@ impl CtrlPlatform {
         Ok(())
     }
 
+    /// FnLockStatus: when true the Fn key is locked – F1–F12 are primary.
+    /// When false, media/system keys are primary.
+    /// Reads from the kernel `asus_wmi` sysfs attribute `fnlock_status`.
+    #[zbus(property)]
+    fn fnlock_status(&self) -> Result<bool, FdoErr> {
+        if !self.platform.has_fnlock_status() {
+            return Err(FdoErr::NotSupported(
+                "RogPlatform: fnlock_status not supported on this model".to_owned(),
+            ));
+        }
+        self.platform.get_fnlock_status().map_err(|err| {
+            warn!("fnlock_status: {}", err);
+            FdoErr::Failed(format!("RogPlatform: fnlock_status: {err}"))
+        })
+    }
+
+    #[zbus(property)]
+    async fn set_fnlock_status(&self, status: bool) -> Result<(), zbus::Error> {
+        if !self.platform.has_fnlock_status() {
+            return Err(zbus::Error::from(FdoErr::NotSupported(
+                "RogPlatform: fnlock_status not supported on this model".to_owned(),
+            )));
+        }
+        self.platform.set_fnlock_status(status).map_err(|err| {
+            warn!("fnlock_status: {}", err);
+            zbus::Error::from(FdoErr::Failed(format!("RogPlatform: fnlock_status: {err}")))
+        })
+    }
     /// Toggle to next platform_profile. Names provided by `Profiles`.
     /// If fan-curves are supported will also activate a fan curve for profile.
     async fn next_platform_profile(

@@ -7,7 +7,7 @@ use serde::{Deserialize, Serialize};
 use zbus::zvariant::{OwnedValue, Type, Value};
 
 use crate::error::{PlatformError, Result};
-use crate::{attr_string, attr_string_array, to_device};
+use crate::{attr_bool, attr_string, attr_string_array, to_device};
 
 /// The "platform" device provides access to things like:
 /// - `dgpu_disable`
@@ -34,6 +34,15 @@ impl RogPlatform {
         /// The acpi platform_profile support
         "platform_profile_choices",
         pp_path
+    );
+
+    attr_bool!(
+        /// The asus-wmi fn_lock state (fnlock_status). When true the Fn key is
+        /// locked: media/system actions are primary and F1-F12 require holding Fn.
+        /// When false, F1-F12 are primary. Exposed by the kernel `asus_wmi` driver
+        /// at `/sys/devices/platform/asus-nb-wmi/fnlock_status` on supported models.
+        "fnlock_status",
+        path
     );
 
     pub fn new() -> Result<Self> {
@@ -325,4 +334,5 @@ pub enum Properties {
     MiniLedMode,
     EgpuEnable,
     ThrottlePolicy,
+    FnLockStatus,
 }

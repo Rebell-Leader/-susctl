@@ -28,6 +28,7 @@ pub enum CliCommand {
     Armoury(ArmouryCommand),
     Backlight(BacklightCommand),
     Battery(BatteryCommand),
+    FnLock(FnLockCommand),
     Info(InfoCommand),
 }
 
@@ -325,3 +326,22 @@ pub struct BrightnessNextCommand {}
     description = "toggle to previous keyboard brightness"
 )]
 pub struct BrightnessPrevCommand {}
+
+#[derive(FromArgs, Debug, Default)]
+#[argh(
+    subcommand,
+    name = "fn-lock",
+    description = "get or set the Fn key lock state"
+)]
+/// When Fn lock is ON (true): media/system actions are primary and F1-F12 require
+/// holding the Fn key. When Fn lock is OFF (false): F1-F12 are primary.
+///
+/// Requires kernel asus_wmi support (fnlock_status sysfs attribute).
+pub struct FnLockCommand {
+    #[argh(
+        option,
+        short = 's',
+        description = "set Fn lock on (true) or off (false)"
+    )]
+    pub set: Option<bool>,
+}

@@ -57,7 +57,9 @@ impl HidRaw {
                             );
                         }
                         return Ok(Self {
-                            file: RefCell::new(OpenOptions::new().write(true).open(dev_node)?),
+                            file: RefCell::new(
+                                OpenOptions::new().read(true).write(true).open(dev_node)?,
+                            ),
                             devfs_path: dev_node.to_owned(),
                             prod_id: this_id_product.to_string_lossy().into(),
                             syspath: endpoint.syspath().into(),
@@ -89,7 +91,9 @@ impl HidRaw {
             if let Some(dev_node) = endpoint.devnode() {
                 if let Some(id_product) = parent.attribute_value("idProduct") {
                     return Ok(Self {
-                        file: RefCell::new(OpenOptions::new().write(true).open(dev_node)?),
+                        file: RefCell::new(
+                            OpenOptions::new().read(true).write(true).open(dev_node)?,
+                        ),
                         devfs_path: dev_node.to_owned(),
                         prod_id: id_product.to_string_lossy().into(),
                         syspath: endpoint.syspath().into(),
